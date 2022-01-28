@@ -1,4 +1,4 @@
-# https://contest.yandex.ru/contest/22450/run-report/64566737/
+# https://contest.yandex.ru/contest/22450/run-report/64592814/
 # Задача: Есть набор символов ".123456789". Из них произвольным
 # образом формируется матрица 4х4. Дано число k.
 # Для девяти циклов с номерами от 1 до 9 необходимо определить
@@ -6,23 +6,39 @@
 # в количестве не более k.
 #
 # Вариант решения.
+# За один проход по матрице подсчитать все вхождения каждого символа,
+# затем подсчитать те символы, вхождение которых не больше k.
+#
+#  Смысл алгоритма:
+#
 # 1. Создать нулевой ответ.
-# 2. Удалить из матрицы символы точки.
-# 3. Создать вспомогательный массив - математич. множество из эл-в матрицы.
-# 4. Для каждого из эл-в этого множества подсчитывать кол-во его вхождений
-# в матрицу. Если значение не превосходит k, добавить 1 к результату.
-from typing import Set
-
+# 2. Создать пуcтой словарь.
+# Ключ - символ, значение - счётчик вхождений.
+# 3. В итерации по матрице: точки пропускать, проверить ключ в словаре.
+# Если нет - создать со значением 1.
+# Если есть - увеличить счётчик на 1.
+#
+# 4. В итерации по словарю сравнить значение (счётчик) с k.
+# Если счётчик <= k то увеличить на 1 результат.
 
 def score_count(key_matrix: str, fingers: int) -> int:
     fingers_all: int = fingers * 2
     result: int = 0
-    key_matrix_num: str = key_matrix.replace('.', '')
-    uniq_buttons: Set[str] = set(key_matrix_num)
+    temp_counts: dict = dict()
 
-    for key in uniq_buttons:
-        if key_matrix_num.count(key) <= fingers_all:
+    for char in key_matrix:
+        if char == '.':
+            continue
+
+        if char in temp_counts:
+            temp_counts[char] += 1
+        else:
+            temp_counts[char] = 1
+
+    for value in temp_counts.values():
+        if value <= fingers_all:
             result += 1
+
     return result
 
 
