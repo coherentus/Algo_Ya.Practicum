@@ -1,4 +1,4 @@
-# https://contest.yandex.ru/contest/22450/run-report/64592814/
+# https://contest.yandex.ru/contest/22450/run-report/64716910/
 # Задача: Есть набор символов ".123456789". Из них произвольным
 # образом формируется матрица 4х4. Дано число k.
 # Для девяти циклов с номерами от 1 до 9 необходимо определить
@@ -6,47 +6,78 @@
 # в количестве не более k.
 #
 # Вариант решения.
-# За один проход по матрице подсчитать все вхождения каждого символа,
-# затем подсчитать те символы, вхождение которых не больше k.
+# На первом этапе посчитать вхождения каждой цифры.
+# На втором этапе посчитать сумму баллов.
 #
 #  Смысл алгоритма:
+# 1. Создать массив счётчиков цифр(список int: из 10 нулей)
+# (цифра "0" в задаче не участвует, но индекс есть для упрощения
+# подсчёта цифр.)
+# 2. Создать нулевой ответ score.
+# 3. Получить из ввода кол-во пальцев fingers.
+# 4. Построчно вводить матрицу:
+# - из строки убрать "."
+# - каждый символ цифры преобразовать в число
+# - числа собрать в список
+# - в функцию подсчёта передать порцию данных и массив счётчиков
+# По окончании обработки ввода в cyfers_counters будут количества
+# вхождений каждой цифры соответсвенно индексу.
 #
-# 1. Создать нулевой ответ.
-# 2. Создать пуcтой словарь.
-# Ключ - символ, значение - счётчик вхождений.
-# 3. В итерации по матрице: точки пропускать, проверить ключ в словаре.
-# Если нет - создать со значением 1.
-# Если есть - увеличить счётчик на 1.
-#
-# 4. В итерации по словарю сравнить значение (счётчик) с k.
-# Если счётчик <= k то увеличить на 1 результат.
+# 5. Передать в функцию подсчёта баллов calc_score() массив cyfers_counters
+# и значение (fingers * 2) для подсчёта итога.
+# 6. Распечатать итог, возврат функции calc_score().
+from typing import List
 
-def score_count(key_matrix: str, fingers: int) -> int:
-    fingers_all: int = fingers * 2
-    result: int = 0
-    temp_counts: dict = dict()
 
-    for char in key_matrix:
-        if char == '.':
-            continue
+def cyfer_count(array: List[int], counters: List[int]) -> None:
+    """Добавить в счётчики вхождения чисел из array.
 
-        if char in temp_counts:
-            temp_counts[char] += 1
-        else:
-            temp_counts[char] = 1
+    Args:
+        array (List[int]): однозначные эл-ты, численно означающие
+        входную цифру.
+        counters (List[int]): внешние счётчики цифр, индекс численно
+        соответствует цифре.
+    Returns: None.
 
-    for value in temp_counts.values():
-        if value <= fingers_all:
+    Модифицирует внешние счётчики counters.
+    """
+    for number in array:
+        counters[number] += 1
+
+
+def calc_score(counters: List[int], dimension: int) -> int:
+    """Подсчитать кол-во эл-в, удовлетворяющих условию.
+
+    Args:
+        counters (List[int]): счётчики цифр, индекс численно
+        соответствует цифре.
+        dimension (int): число для вычисления условия.
+
+    Returns:
+        int: кол-во эл-ов, удовлетворяющих услови
+
+    Для начисления балла(инкремента счётчика) необходимо чтобы
+    выполнялось условие dimension >= number, где dimension - кол-во
+    пальцев за двоих игроков, number - кол-во одной цифры на табло.
+    При нулевом счётчике цифр начисление балла невозможно.
+    """
+    result = 0
+    for number in counters:
+        if number and dimension >= number:
             result += 1
-
     return result
 
 
 def main():
+    cyfers_counters: List[int] = [0] * 10
+    score: int = 0
     fingers: int = int(input())
-    matrix: str = ''
-    matrix = ''.join(input() for _ in range(4))
-    score: int = score_count(matrix, fingers)
+
+    for _ in range(4):
+        line_in: List[int] = (int(char) for char in input().replace('.', ''))
+        cyfer_count(line_in, cyfers_counters)
+
+    score = calc_score(cyfers_counters, fingers * 2)
     print(score)
 
 
