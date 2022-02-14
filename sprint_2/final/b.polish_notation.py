@@ -1,4 +1,4 @@
-# https://contest.yandex.ru/contest/22781/run-report/65137841/
+# https://contest.yandex.ru/contest/22781/run-report/65145738/
 # Задача B. Калькулятор.
 # В единственной строке дано выражение в обратной польской нотации.
 # Числа и арифметические операции записаны через пробел.
@@ -23,7 +23,7 @@
 # Решение сводится к корректному воплощению этого описания.
 #
 # В Python есть структура данных "список", имеющая простые в использовании
-# методы добавления и извлечения эл-та .push()  и .pop(). На них,
+# методы добавления и извлечения эл-та .append()  и .pop(). На них,
 # на списке и его методах, и построена работа алгоритма.
 #
 # Входной поток разбивается на подстроки, если в подстроке опознан знак
@@ -38,11 +38,12 @@
 # Тем не менее введена проверка на возможность извлечения операнда из стека.
 #
 # -- ОЦЕНКА СЛОЖНОСТИ --
-# Методы списка Python .push() и .pop() в имеют временную и пространственную
+# Методы списка Python .append() и .pop() имеют временную и пространственную
 # сложности О(1), все остальные манипуляции также не зависят от количества
 # входных данных, кроме операции ввода. Она имеет как временную так
 # пространственную сложность О(n).
-# Следовательно, весь алгоритм имеет сложности О(n).
+# Следовательно, весь алгоритм имеет сложности О(n), где n это количество
+# подстрок во входной строке.
 
 from typing import Callable, Dict, List
 
@@ -52,23 +53,6 @@ OPERATIONS: Dict[str, Callable[[int, int], int]] = {
     '*': lambda x, y: x * y,
     '/': lambda x, y: x // y,
 }
-
-
-class Stack():
-
-    def __init__(self) -> None:
-        self.__items: List[int] = list()
-
-    def push(self, item: int) -> None:
-        self.__items.append(item)
-
-    def pop(self) -> int:
-        try:
-            pop_res: int = self.__items.pop()
-        except IndexError:
-            print('Ошибка. Стек пуст. Извлечь значение невозможно.')
-            raise
-        return pop_res
 
 
 def calc_reverse_polish_notation(expression: str) -> int:
@@ -93,17 +77,21 @@ def calc_reverse_polish_notation(expression: str) -> int:
     По окончании подстрок снять с вершины стека значение, вернуть его
     в качестве результата.
     """
-    operand_stack = Stack()
+    operand_stack: List[int] = list()
     sequence: List[str] = expression.split()
     for item in sequence:
-        if item not in OPERATIONS:
-            operand_stack.push(int(item))
-        else:
+        operation = OPERATIONS.get(item)
+        if operation:
+            if len(operand_stack) < 2:
+                raise IndexError('Ошибка. В стеке не хватает операндов.')
+
             second: int = operand_stack.pop()
             first: int = operand_stack.pop()
-            operation: Callable[[int, int], int] = OPERATIONS[item]
             result: int = operation(first, second)
-            operand_stack.push(result)
+            operand_stack.append(result)
+        else:
+            operand_stack.append(int(item))
+
     return operand_stack.pop()
 
 
