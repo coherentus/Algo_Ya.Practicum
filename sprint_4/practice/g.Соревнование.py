@@ -1,30 +1,30 @@
-def chek_range(arr, start, size):
-    if sum(arr[start: start + size:]) == size // 2:
-        return True
-    return False
+def find_long_range(arr, start):
+    """Вернуть длину последовательности.
 
-
-def find_long_range(arr, first):
-    len_range = 0
-    start = first
-    size = 2
-    while (size + start) < len(arr) + 1:
-        if chek_range(arr, start, size):
-            len_range += size
-            start += size
-            size *= 2
-        else:
-            return len_range
-    return len_range
+    """
+    result = 0
+    idx = start
+    parity = 0  # zero - is parity, not zero - not parity
+    while idx < len(arr) - 1:  # out of range guard
+        parity = parity + 1 if arr[idx] else parity - 1
+        parity = parity + 1 if arr[idx + 1] else parity - 1
+        idx += 2
+        if not parity:
+            result += idx - start
+    return result
 
 
 def find_max_range(arr):
-    max_range = 0
+    max_len = 0
     for i in range(len(arr)):
-        cur_range = find_long_range(arr, i)
-        if cur_range > max_range:
-            max_range = cur_range
-    return max_range
+        loc_start = i
+        if max_len < len(arr) - i:
+            cur_len = find_long_range(arr, loc_start)
+            if cur_len > max_len:
+                max_len = cur_len
+            loc_start += cur_len
+
+    return max_len
 
 
 def main():
