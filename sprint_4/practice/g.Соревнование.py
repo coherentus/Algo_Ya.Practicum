@@ -1,35 +1,34 @@
-def chek_range(arr, start, size):
-    if sum(arr[start: start + size:]) == size // 2:
-        return True
-    return False
-
-
-def find_long_range(arr, first):
-    len_range = 0
-    start = first
-    size = 2
-    while (size + start) < len(arr) + 1:
-        if chek_range(arr, start, size):
-            len_range += size
-            start += size
-            size *= 2
-        else:
-            return len_range
-    return len_range
-
-
 def find_max_range(arr):
-    max_range = 0
+    pref_arr = [None] * len(arr)
+    pref_arr[0] = arr[0]
+    for i in range(1, len(arr)):
+        pref_arr[i] = pref_arr[i - 1] + arr[i]
+
+    first_val_idx = dict()
+    last_val_idx = dict()
+
     for i in range(len(arr)):
-        cur_range = find_long_range(arr, i)
-        if cur_range > max_range:
-            max_range = cur_range
-    return max_range
+        key = pref_arr[i]
+        last_val_idx[key] = i
+        if pref_arr[i] not in first_val_idx:
+            first_val_idx[key] = i
+
+    max_size = 0
+    for key in first_val_idx:
+        size = last_val_idx[key] - first_val_idx[key]
+        if size > max_size:
+            max_size = size
+    return max_size
 
 
 def main():
-    if int(input()):
-        rounds = list(map(int, str(input()).split()))
+    size = int(input())
+    if size:
+        rounds = [None] * size
+        rounds = input().split()
+        for i in range(size):
+            rounds[i] = -1 if rounds[i] == '0' else 1
+        # list(map(int, str(input()).split()))
         print(find_max_range(rounds))
     else:
         print('0')
