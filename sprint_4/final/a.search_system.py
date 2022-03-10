@@ -1,6 +1,6 @@
 def add_words(words_arr, words_input, doc_num):
     """Добавить в базу слов порцию из документа.
-    
+
     Аргументы:
     words_arr: dict - БД слов.
                       Ключ - слово, значение - список словарей,
@@ -18,13 +18,13 @@ def add_words(words_arr, words_input, doc_num):
     - если слово уже есть, создаётся или обновляется существующий эл-т
     """
     for word in words_input:
-            if word in words_arr:
-                if doc_num in words_arr[word]:
-                    words_arr[word][doc_num] += 1
-                else:
-                    words_arr[word][doc_num] = 1
+        if word in words_arr:
+            if doc_num in words_arr[word]:
+                words_arr[word][doc_num] += 1
             else:
-                words_arr[word] = {doc_num: 1}
+                words_arr[word][doc_num] = 1
+        else:
+            words_arr[word] = {doc_num: 1}
 
 
 def get_relevant(request, words_in_docs):
@@ -65,7 +65,7 @@ def main():
     words_db = dict()
     for num_doc in range(1, num_documents + 1):
         document_in = input().split()
-        add_words(words_db, document_in, num_doc)        
+        add_words(words_db, document_in, num_doc)
 
     num_requests = int(input())
     for _ in range(num_requests):
