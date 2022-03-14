@@ -1,15 +1,19 @@
 def add_word(words, in_word, index):
     chars = sorted([char for char in in_word])
-    tmp = words.get(chars)
+    key = ''.join(chars)
+    tmp = words.get(key)
     if tmp:
         tmp.append(index)
-        words[chars] = tmp
+        words[key] = tmp
     else:
-        words[chars] = [index]
+        words[key] = [index]
 
 
 def check_anagram(words):
-    pass
+    result = list()
+    for word in words.values():
+        result.append(word)
+    return sorted(result)
 
 
 def main():
