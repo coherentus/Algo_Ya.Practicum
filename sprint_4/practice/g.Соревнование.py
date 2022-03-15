@@ -12,7 +12,8 @@ def find_max_range(arr):
         last_val_idx[key] = i
         if pref_arr[i] not in first_val_idx:
             first_val_idx[key] = i
-
+    first_val_idx[0] = -1
+    last_val_idx.setdefault(0, -1)
     max_size = 0
     for key in first_val_idx:
         size = last_val_idx[key] - first_val_idx[key]
