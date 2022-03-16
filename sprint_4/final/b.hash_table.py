@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Optional
+from typing import Dict, List, Optional
 
 HASH_TABLE_SIZE = 100000
 OPERATIONS_TABLE: Dict[str, str] = {
@@ -14,16 +14,6 @@ class Node:
         self.next = None
 
 
-"""class LinkedList:
-    def __init__(self) -> None:
-        self.__lenght = 0
-        self.__head = None
-
-    def add_node(self, value) -> None:
-        self.__head = Node(value)
-        self.__head.next = None"""
-
-
 class HashTable:
     """Хеш-таблица. Реализация с ограниченным функционалом.
 
@@ -35,8 +25,8 @@ class HashTable:
     - delete key –— удаление ключа.
     Если ключа нет, то вернуть «None». Иначе вернуть найденное значение
     и удалить ключ.
-    Число хранимых в таблице ключей не превосходит 10^5.
-    Разрешение коллизий с помощью метода цепочек или с помощью открытой адресации.
+    Число ячеек (bucket) для хранения не превосходит 10^5.
+    Разрешение коллизий с помощью метода цепочек.
     Все операции выполняются за O(1) в среднем.
     Рехеширование и масштабирование хеш-таблицы не предусмотрено.
     Ключи и значения —– целые числа.
@@ -44,7 +34,6 @@ class HashTable:
     def __init__(self, size: int) -> None:
         self.__size: int = size
         self.__items: List[Optional[Node]] = [None] * size
-        return None
 
     def getitem(self, key: str) -> Optional[int]:
         """Вернуть значение по ключу.
@@ -60,13 +49,10 @@ class HashTable:
         """
         h = self.__get_hash(key)
         node = self.__items[h]
-        #if not node:
-        #    return None
         while node:
             if node.value[0] == key:
                 return node.value[1]
             node = node.next
-        return None
 
     def setitem(self, key: str, value: str) -> None:
         """Записать значение по ключу.
@@ -91,8 +77,7 @@ class HashTable:
             if not node.next:
                 node.next = Node(value=[key, value])
                 return None
-            node = node.next        
-        return None
+            node = node.next
 
     def delitem(self, key: str) -> Optional[int]:
         """Удалить значение по ключу.
@@ -121,7 +106,6 @@ class HashTable:
                     self.__items[h] = node.next
                 return value
             node = node.next
-        return None
 
     def __get_hash(self, key: str) -> int:
         return int(key) % self.__size
