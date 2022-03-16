@@ -9,9 +9,19 @@ OPERATIONS_TABLE: Dict[str, str] = {
 
 
 class Node:
-    def __init__(self, value=None):
+    def __init__(self, value=None, next=None):
         self.value = value
         self.next = None
+
+
+"""class LinkedList:
+    def __init__(self) -> None:
+        self.__lenght = 0
+        self.__head = None
+
+    def add_node(self, value) -> None:
+        self.__head = Node(value)
+        self.__head.next = None"""
 
 
 class HashTable:
@@ -33,7 +43,8 @@ class HashTable:
     """
     def __init__(self, size: int) -> None:
         self.__size: int = size
-        self.__items: List[Optional[int]] = [None] * size
+        self.__items: List[Optional[Node]] = [None] * size
+        return None
 
     def getitem(self, key: str) -> Optional[int]:
         """Вернуть значение по ключу.
@@ -55,6 +66,7 @@ class HashTable:
             if node.value[0] == key:
                 return node.value[1]
             node = node.next
+        return None
 
     def setitem(self, key: str, value: str) -> None:
         """Записать значение по ключу.
@@ -69,18 +81,17 @@ class HashTable:
         h = self.__get_hash(key)
         node = self.__items[h]
         if not node:
-            self.__items[h] = Node()
-            self.__items[h].value[0] = key
-            self.__items[h].value[1] = value
+            node = Node(value=[key, value])
+            self.__items[h] = node
             return None
-        while node.next:
+        while node:
             if node.value[0] == key:
                 node.value[1] = value
                 return None
-            node = node.next
-        node.next = Node()
-        node.next.value[0] = key
-        node.next.value[1] = value
+            if not node.next:
+                node.next = Node(value=[key, value])
+                return None
+            node = node.next        
         return None
 
     def delitem(self, key: str) -> Optional[int]:
@@ -112,7 +123,7 @@ class HashTable:
             node = node.next
         return None
 
-    def __get_hash(self, key: str):
+    def __get_hash(self, key: str) -> int:
         return int(key) % self.__size
 
 
@@ -120,7 +131,7 @@ def get_res(table, requ):
     """Вернуть результат действия из запроса."""
     command, *args = requ.split()
     func = getattr(table, OPERATIONS_TABLE[command])
-    return func(*args)
+    return func(*args), command
 
 
 def main():
@@ -128,8 +139,9 @@ def main():
     num_requests = int(input())
     for _ in range(num_requests):
         request = input()
-        result = get_res(hash_table, request)
-        print(result)
+        result, command = get_res(hash_table, request)
+        if not command == 'put':
+            print(result)
 
 
 if __name__ == '__main__':
