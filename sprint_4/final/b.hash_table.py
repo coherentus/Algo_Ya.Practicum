@@ -1,3 +1,11 @@
+# Задача А. Поисковая система.
+# Суть задания:
+
+
+# -- ПРИНЦИП РАБОТЫ --
+
+# -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+
 from typing import Dict, List, Optional
 
 HASH_TABLE_SIZE = 100000
@@ -11,7 +19,10 @@ OPERATIONS_TABLE: Dict[str, str] = {
 class Node:
     def __init__(self, value=None, next=None):
         self.value = value
-        self.next = None
+        if next:
+            self.next = next
+        else:
+            self.next = None
 
 
 class HashTable:
@@ -39,17 +50,17 @@ class HashTable:
         """Вернуть значение по ключу.
 
         Args:
-            key (int): Запрашиваемый ключ.
+            key (str): Запрашиваемый ключ.
 
         Returns:
-            Optional[int]: Значение, если есть, или None.
+            Optional[str]: Значение, если есть, или None.
         Методом __get_hash получить индекс в массиве данных.
         В эл-те массива определить, есть ли уже значение по ключу.
         Вернуть результат.
         """
         h = self.__get_hash(key)
-        node = self.__items[h]
-        while node:
+        node = self.__items[h]  # head of linked list
+        while node is not None:
             if node.value[0] == key:
                 return node.value[1]
             node = node.next
@@ -58,24 +69,26 @@ class HashTable:
         """Записать значение по ключу.
 
         Args:
-            key (int): Запрашиваемый ключ.
-            value (int): Переданное значение.
+            key (str): Запрашиваемый ключ.
+            value (str): Переданное значение.
         Методом __get_hash получить индекс в массиве данных.
         В эл-те массива определить, есть ли уже значение по ключу.
         Если есть - обновить, иначе - создать.
         """
         h = self.__get_hash(key)
-        node = self.__items[h]
-        if not node:
+        node = self.__items[h]  # head of linked list
+        if node is None:
             node = Node(value=[key, value])
             self.__items[h] = node
             return None
-        while node:
+
+        while node is not None:
             if node.value[0] == key:
                 node.value[1] = value
                 return None
-            if not node.next:
-                node.next = Node(value=[key, value])
+            if node.next is None:
+                node_new = Node(value=[key, value])
+                node.next = node_new
                 return None
             node = node.next
 
@@ -83,28 +96,32 @@ class HashTable:
         """Удалить значение по ключу.
 
         Args:
-            key (int): Запрашиваемый ключ.
+            key (str): Запрашиваемый ключ.
 
         Returns:
-            Optional[int]: Если есть, то значение, или None.
+            Optional[str]: Если есть, то значение, или None.
         Методом __get_hash получить индекс в массиве данных.
         В эл-те массива определить, есть ли уже значение по ключу.
         В переменной для возврата сохранить значение или None.
-        Удалить значение и ключ. Вернуть ответ.
+        Если есть ключ удалить соответствующий ему эл-т. Вернуть ответ.
         """
         h = self.__get_hash(key)
-        node = self.__items[h]
-        if not node:
+        head = self.__items[h]  # head of linked list
+        if head is None:
             return None
-        prev_node = None
-        while node:
+        prev_node = head
+        if head.value[0] == key:
+            value = head.value[1]
+            self.__items[h] = head.next
+            return value
+
+        node = head.next
+        while node is not None:
             if node.value[0] == key:
                 value = node.value[1]
-                if prev_node:
-                    prev_node.next = node.next
-                else:
-                    self.__items[h] = node.next
+                prev_node.next = node.next
                 return value
+            prev_node = node
             node = node.next
 
     def __get_hash(self, key: str) -> int:
