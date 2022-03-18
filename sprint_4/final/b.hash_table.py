@@ -87,14 +87,13 @@
 
 # -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-HASH_TABLE_SIZE = 100000
-OPERATIONS_TABLE: Dict[str, str] = {
-    'put': 'setitem',
-    'get': 'getitem',
-    'delete': 'delitem',
-}
+# HASH_TABLE_SIZE = 100000
+S_CONST = 2654435769
+P_CONST = 16
+HASH_TABLE_SIZE = 2 ** P_CONST
+BITWISE = 32 - P_CONST
 
 
 class Node:
@@ -106,10 +105,7 @@ class Node:
     """
     def __init__(self, value=None, next=None):
         self.value = value
-        if next is not None:
-            self.next = next
-        else:
-            self.next = None
+        self.next = next
 
 
 class HashTable:
@@ -133,7 +129,7 @@ class HashTable:
         self.__size: int = size
         self.__items: List[Optional[Node]] = [None] * size
 
-    def getitem(self, key: str) -> Optional[int]:
+    def get(self, key: str) -> Optional[int]:
         """Вернуть значение по ключу.
 
         Args:
@@ -152,7 +148,7 @@ class HashTable:
                 return node.value[1]
             node = node.next
 
-    def setitem(self, key: str, value: str) -> None:
+    def put(self, key: str, value: str) -> None:
         """Записать значение по ключу.
 
         Args:
@@ -179,7 +175,7 @@ class HashTable:
                 return None
             node = node.next
 
-    def delitem(self, key: str) -> Optional[int]:
+    def delete(self, key: str) -> Optional[int]:
         """Удалить значение по ключу.
 
         Args:
@@ -211,14 +207,19 @@ class HashTable:
             prev_node = node
             node = node.next
 
-    def __get_hash(self, key: str) -> int:
+    def __get_hash2(self, key: str) -> int:
         return int(key) % self.__size
+
+    def __get_hash(self, key: str) -> int:
+        h = self.__get_hash2(key)  # h = int(key)
+        return ((h * S_CONST) % 32) >> BITWISE
+        # (((h * S_CONST) % 32) >> BITWISE)
 
 
 def get_res(table, requ):
     """Вернуть результат действия из запроса."""
     command, *args = requ.split()
-    func = getattr(table, OPERATIONS_TABLE[command])
+    func = getattr(table, command)
     return func(*args), command
 
 
