@@ -26,7 +26,7 @@
 # список, адресуемые эл-тами основного класса хеш-таблицы.
 #
 # Класс HashTable представляет собой набор из приватного атрибута __items
-# и методов: приватного __get_hash и публичных getitem, setitem и delitem.
+# и методов: приватного __get_index и публичных getitem, setitem и delitem.
 #
 # Атрибут __items стандартного типа list хранит головные эл-ты связных
 # списков, которые в свою очередь предназначены для разрешения коллизий.
@@ -35,21 +35,36 @@
 # При создании экземпляра класса HashTable создаётся единоразово объёмом
 # равным запрошеннму размеру. Значения инициализируются «None».
 #
-# Метод __get_hash - вычисление хеша для запрошенного ключа. Возвращаемое
+# В методе __get_index - совмещены два действия:
+# - вычисление хеша для запрошенного ключа, как целочисленного значения.
+# - вычисление индекса эл-та в таблице.
+# Для вычисления хеша применён метод умножения. В общих чертах описан
+# в теории:
+# https://practicum.yandex.ru/learn/algorithms/courses/7f101a83-9539-4599-b6e8-8645c3f31fad/sprints/21362/topics/618173c7-3c0e-4955-b88b-d7146f9ffe2e/lessons/db4e40bc-75c2-4302-95ae-e9cc04f86546/
+# Суть в том, что целочисленный ключ умножается на дробную константу.
+# Дробная часть находится в диапазоне [0, 1).
+# Если её домножить на число корзин M, то она будет в диапазоне [0, M).
+# Остаётся отбросить дробную часть.
+# Требуемые от хеш-функции качества, как лавинность и равномерность для
+# этого метода расчёта хеша зависят от выбора дробной константы. Чтобы
+# вычисления проводились быстро, выбрано число близкое к "золотому сечению"
+# выраженное целыми числами. 
+
+# Возвращаемое
 # значение типа int используется в методах манипулирования данными
 # как идекс в приватном атрибуте __items.
 #
-# Метод getitem - выдача значения по ключу, если ключа нет - выдача «None».
+# Метод get - выдача значения по ключу, если ключа нет - выдача «None».
 # Алгоритм:
-# - методом __get_hash получить индекс эл-та в массиве __items.
+# - методом __get_index получить индекс эл-та в массиве __items.
 # - принять головой связного списка эл-т __items по этому индексу.
 # - перебором связного списка искать пару ключ-значение.
 # - если найдена - вернуть значение.
 # - если список кончился - вернуть «None».
 #
-# Метод setitem - запись значения по ключу. Возврат значения не требуется.
+# Метод put - запись значения по ключу. Возврат значения не требуется.
 # Алгоритм:
-# - методом __get_hash получить индекс эл-та в массиве __items.
+# - методом __get_index получить индекс эл-та в массиве __items.
 # - принять головой связного списка эл-т __items по этому индексу.
 # - если для этого эл-та __items ещё не создан связный список (признак
 # этого - значение «None» в __items[h]), то создать объект Node c входной
@@ -63,10 +78,10 @@
 # создать экземпляр Node c входной парой ключ-значение, записать ссылку на
 # него в атрибут .next текущего эл-та связного списка, завершить обработку.
 #
-# Метод delitem - удаление ключа. Если ключ есть, то вернуть значение,
+# Метод delete - удаление ключа. Если ключ есть, то вернуть значение,
 # иначе вернуть «None».
 # Алгоритм:
-# - методом __get_hash получить индекс эл-та в массиве __items.
+# - методом __get_index получить индекс эл-та в массиве __items.
 # - если для этого эл-та __items ещё не создан связный список (признак
 # этого - значение «None» в __items[h]), то вернуть «None»,
 # завершить обработку.
@@ -93,11 +108,14 @@
 # корректные значения сообразно своему функционалу.
 # Метод удаления ключа корректно удаляет эл-т связного списка как с головы
 # списка, так и из середины и в конце.
+#
+# -- Оценка сложности --
+#
 from typing import Dict, List, Optional
 
 # HASH_TABLE_SIZE = 100000
-S_CONST = 2654435769
-P_CONST = 16
+UNDER_GOLDEN_PHI = 2654435769
+P_CONST = 17
 HASH_TABLE_SIZE = 2 ** P_CONST
 BITWISE = 32 - P_CONST
 
@@ -131,11 +149,10 @@ class HashTable:
     Рехеширование и масштабирование хеш-таблицы не предусмотрено.
     Ключи и значения —– целые числа.
     """
-    def __init__(self, size: int) -> None:
-        self.__size: int = size
-        self.__items: List[Optional[Node]] = [None] * size
+    def __init__(self, size):
+        self.__items = [None] * size
 
-    def get(self, key: str) -> Optional[int]:
+    def get(self, key):
         """Вернуть значение по ключу.
 
         Args:
@@ -143,32 +160,32 @@ class HashTable:
 
         Returns:
             Optional[str]: Значение, если есть, или None.
-        Методом __get_hash получить индекс в массиве данных.
+        Методом __get_index получить индекс в массиве данных.
         В эл-те массива определить, есть ли уже значение по ключу.
         Вернуть результат.
         """
-        h = self.__get_hash(key)
-        node = self.__items[h]  # head of linked list
+        idx = self.__get_index(key)
+        node = self.__items[idx]  # head of linked list
         while node is not None:
             if node.value[0] == key:
                 return node.value[1]
             node = node.next
 
-    def put(self, key: str, value: str) -> None:
+    def put(self, key, value):
         """Записать значение по ключу.
 
         Args:
             key (str): Запрашиваемый ключ.
             value (str): Переданное значение.
-        Методом __get_hash получить индекс в массиве данных.
+        Методом __get_index получить индекс в массиве данных.
         В эл-те массива определить, есть ли уже значение по ключу.
         Если есть - обновить, иначе - создать.
         """
-        h = self.__get_hash(key)
-        node = self.__items[h]  # head of linked list
+        idx = self.__get_index(key)
+        node = self.__items[idx]  # head of linked list
         if node is None:
             node = Node(value=[key, value])
-            self.__items[h] = node
+            self.__items[idx] = node
             return None
 
         while node is not None:
@@ -181,7 +198,7 @@ class HashTable:
                 return None
             node = node.next
 
-    def delete(self, key: str) -> Optional[int]:
+    def delete(self, key):
         """Удалить значение по ключу.
 
         Args:
@@ -189,19 +206,19 @@ class HashTable:
 
         Returns:
             Optional[str]: Если есть, то значение, или None.
-        Методом __get_hash получить индекс в массиве данных.
+        Методом __get_index получить индекс в массиве данных.
         В эл-те массива определить, есть ли уже значение по ключу.
         В переменной для возврата сохранить значение или None.
         Если есть ключ удалить соответствующий ему эл-т. Вернуть ответ.
         """
-        h = self.__get_hash(key)
-        head = self.__items[h]  # head of linked list
+        idx = self.__get_index(key)
+        head = self.__items[idx]  # head of linked list
         if head is None:
             return None
         prev_node = head
         if head.value[0] == key:
             value = head.value[1]
-            self.__items[h] = head.next
+            self.__items[idx] = head.next
             return value
 
         node = head.next
@@ -213,13 +230,9 @@ class HashTable:
             prev_node = node
             node = node.next
 
-    def __get_hash2(self, key: str) -> int:
-        return int(key) % self.__size
 
-    def __get_hash(self, key: str) -> int:
-        h = self.__get_hash2(key)  # h = int(key)
-        return ((h * S_CONST) % 32) >> BITWISE
-        # (((h * S_CONST) % 32) >> BITWISE)
+    def __get_index(self, key: str) -> int:
+        return ((int(key) * UNDER_GOLDEN_PHI) >> BITWISE) % HASH_TABLE_SIZE
 
 
 def get_res(table, requ):
