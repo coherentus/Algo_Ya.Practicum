@@ -1,4 +1,4 @@
-# https://contest.yandex.ru/contest/24414/run-report/66126327/
+# https://contest.yandex.ru/contest/24414/run-report/66268691/
 # Задача А. Поисковая система.
 # Суть задания:
 # - на входе:
@@ -58,6 +58,8 @@
 # удаления повторных слов set(), которая сама по себе имеет сложность O(N),
 # сложности оработки одного запроса, временная и пространственная будут
 # составлять O(2Nw), где Nw - длина запроса в уникальных словах или O(N).
+from collections import defaultdict
+
 
 def add_words(words_arr, words_input, doc_num):
     """Добавить в базу слов порцию из документа.
@@ -106,17 +108,13 @@ def get_relevant(request, words_in_docs):
     От среза из первых 5-ти эл-тов берётся вторая колонка и возвращается.
     """
     answer = list()
-    words_stat = dict()
+    words_stat = defaultdict(int)
     for word in request:
         if word in words_in_docs:
             for doc_num, count_in_doc in words_in_docs[word].items():
-                if doc_num in words_stat:
-                    words_stat[doc_num] += count_in_doc
-                else:
-                    words_stat[doc_num] = count_in_doc
+                words_stat[doc_num] += count_in_doc
 
-    for key, value in words_stat.items():
-        answer.append((-value, key))
+    answer = [(-value, key) for key, value in words_stat.items()]
     answer = sorted(answer)[0:5]
     return [x[1] for x in answer]
 
