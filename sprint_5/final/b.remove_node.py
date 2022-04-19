@@ -49,12 +49,12 @@ def remove(root: Node, key: int) -> Optional[Node]:
     # find node
     current_node = root
     is_found: boolean = False
-    parent_p: Optional[Node] = None
+    parent_d: Optional[Node] = None
     while True:
         if current_node.value == key:
             is_found = True
             break
-        parent_p = current_node
+        parent_d = current_node
         if current_node.value > key:
             if current_node.left is None:
                 break
@@ -72,17 +72,37 @@ def remove(root: Node, key: int) -> Optional[Node]:
     # Узел найден.
     # Случай 1. Узел это лист.
     if current_node.right is None and current_node.left is None:
-        if parent_p.left == current_node:
-            parent_p.left = None
+        if parent_d.left == current_node:
+            parent_d.left = None
         else:
-            parent_p.right = None
+            parent_d.right = None
         return root
 
-    # Случай 2. Узел имеет потомка(-ов).
-    # Вариант а) Нет левого потомка.
-    # Замена на самый левый лист в правом поддереве. leftmost
-    if parent_p.left is None:
-        cur_leftmost_node = parent_p.right
+    # Случай 2. Узел имеет одного потомка.
+    # нет левого
+    # в родителя передвинуть правого потомка
+    if current_node.left is None:
+        if parent_d.left == current_node:
+            parent_d.left = current_node.right
+        elif parent_d.right == current_node:
+            parent_d.right = current_node.right
+        return root
+    # нет правого
+    # в родителя передвинуть левого потомка
+    if current_node.right is None:
+        if parent_d.left == current_node:
+            parent_d.left = current_node.left
+        elif parent_d.right == current_node:
+            parent_d.right = current_node.left
+        return root
+
+    # Случай 3. Удаляемый узел имеет 2-х потомков.
+    # Заменить удаляемый самым правым из левого поддерева.
+
+    
+    
+    if parent_d.left is None:
+        cur_leftmost_node = parent_d.right
         while True:
             if cur_leftmost_node.left:
                 sub_parent = cur_leftmost_node.left
@@ -97,7 +117,6 @@ def remove(root: Node, key: int) -> Optional[Node]:
 
 
 
-    # Вариант б) Есть левый потомок.
-    # Замена на самый правый лист в левом поддереве.
+
 
     return root
