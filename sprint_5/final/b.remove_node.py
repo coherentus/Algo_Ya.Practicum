@@ -38,6 +38,14 @@ def remove(root: Node, key: int) -> Optional[Node]:
     """
     from typing import Optional
 
+    # крайние случаи
+    # исходное дерево пусто
+    if root is None:
+        return None
+    # искомый ключ в корне и нет потомков
+    if ((root.value == key) and (root.left is None and root.right is None)):
+        return None
+
     # find node
     current_node = root
     is_found: boolean = False
@@ -64,10 +72,6 @@ def remove(root: Node, key: int) -> Optional[Node]:
     # Узел найден.
     # Случай 1. Узел это лист.
     if current_node.right is None and current_node.left is None:
-        # Вариант а) Узел - корень.
-        if current_node == root:
-            return None
-        # Вариант б) Узел имеет родителя.
         if parent_p.left == current_node:
             parent_p.left = None
         else:
