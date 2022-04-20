@@ -99,24 +99,20 @@ def remove(root: Node, key: int) -> Optional[Node]:
     # Случай 3. Удаляемый узел имеет 2-х потомков.
     # Заменить удаляемый самым правым из левого поддерева.
 
+    # вершина поддерева
+    sub_parent = current_node.left
+    # если левый узел - лист, его просто удалить
+    if sub_parent.left is None and sub_parent.right is None:
+        current_node.left = None
+        return root
     
-    
-    if parent_d.left is None:
-        cur_leftmost_node = parent_d.right
-        while True:
-            if cur_leftmost_node.left:
-                sub_parent = cur_leftmost_node.left
-            else:
-                sub_value = cur_leftmost_node.value
-                sub_parent.right = cur_leftmost_node.right
-                current_node.value = sub_value
-                
+    # поиск враво до None
+    sub_node = sub_parent.right
+    while True:
+        if sub_node.right is None:  # узел для обмена найден
+            current_node.value = sub_node.value
+            sub_parent.right = sub_node.left
+            return root
+        sub_parent = sub_parent.right
+        sub_node = sub_node.right
 
-
-
-
-
-
-
-
-    return root
