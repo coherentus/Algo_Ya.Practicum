@@ -8,6 +8,31 @@ class Node:
 def print_range(node: Node, l: int, r: int):
     result = []
 
+    # поиск первого ключа (левого)
+    key = l
+    current_node = node
+    is_found: boolean = False
+    parent_d: Optional[Node] = None
+    while True:
+        if current_node.value == key:
+            is_found = True
+            break
+        parent_d = current_node
+        if current_node.value > key:
+            if current_node.left is None:
+                break
+            current_node = current_node.left
+        else:
+            if current_node.right is None:
+                break
+            current_node = current_node.right
+    
+    # current_node - первый левый ключ 
+    # parrent_d - родитель
+    
+    
+    
+    
     def go_forward(vertex, left, right, res):
         print(vertex.value)
         if l <= vertex.value <= r:
