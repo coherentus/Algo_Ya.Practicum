@@ -15,7 +15,7 @@
 def sift_down(heap: list, idx: int) -> int:
     heap_size = len(heap) - 1
      
-    cld_idx_l = idx >> 1
+    cld_idx_l = idx * 2
     if cld_idx_l > heap_size:
         cld_idx_l = None
     cld_idx_r = cld_idx_l + 1
