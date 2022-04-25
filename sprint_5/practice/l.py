@@ -28,14 +28,24 @@ def sift_down(heap: list, idx: int) -> int:
     
     # один потомок, только левый.
     if cld_idx_r is None:
-        heap[idx], heap[cld_idx_l] = heap[cld_idx_l], heap[idx]
-        return cld_idx_l
+        if heap[idx] < heap[cld_idx_l]:
+            heap[idx], heap[cld_idx_l] = heap[cld_idx_l], heap[idx]
+            return cld_idx_l
+        else:
+            return idx
     
     # оба потомка есть
     # меньше обоих детей
     # менять с большим
     if (heap[idx] < heap[cld_idx_l]) and (heap[idx] < heap[cld_idx_r]):
         if heap[cld_idx_l] < heap[cld_idx_r]:
+            heap[idx], heap[cld_idx_r] = heap[cld_idx_r], heap[idx]
+            idx = sift_down(heap, cld_idx_r)
+        else:
+            heap[idx], heap[cld_idx_l] = heap[cld_idx_l], heap[idx]
+            idx = sift_down(heap, cld_idx_l)
+    else:
+        if heap[idx] < heap[cld_idx_r]:
             heap[idx], heap[cld_idx_r] = heap[cld_idx_r], heap[idx]
             idx = sift_down(heap, cld_idx_r)
         else:
