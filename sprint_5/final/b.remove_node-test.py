@@ -132,3 +132,35 @@ def remove(root, key: int):
             return root
         sub_parent = sub_parent.right
         sub_node = sub_node.right
+"""
+7
+1 4 2 3
+2 2 4 5
+3 6 6 7
+4 1 -1 -1
+5 3 -1 -1
+6 5 -1 -1
+7 7 -1 -1
+6
+"""
+def make_tree():
+    node7 = Node(None, None, 7)
+    node6 = Node(None, None, 5)
+    node5 = Node(None, None, 3)
+    node4 = Node(None, None, 1)
+    node3 = Node(node6, node7, 6)
+    node2 = Node(node4, node5, 2)
+    root = Node(node2, node3, 4)
+    """node1 = Node(1)
+    node2 = Node(-5)
+    node3 = Node(3, node1, node2)
+    node4 = Node(2, node3, None)"""
+    return root
+
+def main():
+    
+    print(remove(make_tree(), 6))
+
+
+if __name__ == '__main__':
+    main()
