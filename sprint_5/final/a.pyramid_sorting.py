@@ -102,14 +102,15 @@ class Pyramyd:
             elem (Any): добавляемый эл-т.
         Return:
             None
-        По индексу .__point добавить эл-т. Затем проверить и восстановить
-        свойства кучи. Алгоритм просеивания вверх.      
+        По индексу self.__point добавить эл-т. Затем проверить и восстановить
+        свойства кучи. Алгоритм просеивания вверх. Увеличить self.__point.
         """
         if self.__lenght == self.size:
             raise KeyError
         self.__items[self.__point] = elem
         self.__sift_up(self.__point)
         self.__point += 1
+        self.__lenght += 1
 
     def __sift_up(self, idx):
         if idx == 1:
@@ -121,8 +122,6 @@ class Pyramyd:
             self.__items[idx], self.__items[parent_idx]
             self.__sift_up(parent_idx) 
 
-
-    
     def get(self):
         """Извлечь элемент с наивысшим приоритетом.add()
 
@@ -131,16 +130,44 @@ class Pyramyd:
         Из эл-та с индексом 1 скопировать значение. Удалить эл-т.
         Перестроить кучу для сохранения свойств.
         """
-        if self.__point == 1:
+        if self.__lenght == 0:
             return None
 
         result = self.__items[1]
-        if self.__point == 2:  # в куче один эл-т
+        if self.__lenght == 1:  # в куче один эл-т
             self.__items[1] = None
             self.__point -= 1
+            self.__lenght -= 1
             return result
-        
+
         self.__items[1] = self.__items[self.__point - 1]
+        self.__lenght -= 1
+        self.__point -= 1
+        self.__sift_down(1)
+        return result
+
+    def __sift_down(self, idx):
+        left = 2 * idx
+        right = left + 1
+        
+        # нет дочерних узлов
+        if self.__lenght < left:
+            return
+
+        # right <= heap.size проверяет, что есть оба дочерних узла
+        if (
+            (right <= self.__lenght) and
+            (self.__items[left] < self.__items[right])
+            ):
+            index_largest = right
+        else:
+            index_largest = left
+
+        if self.__items[idx] < self.__items[index_largest]:
+            self.__items[idx],self.__items[index_largest] = \
+            self.__items[index_largest], self.__items[idx]
+
+            self.__sift_down(index_largest) 
 
     def __get_point(self):
         return self.__point
@@ -162,19 +189,38 @@ class Pyramyd:
     # псевдокод для heap_get_max_priority можно посмотреть в прошлом уроке
     i += 1
 
+функция sift_down(heap, index):
+    left = 2 * index 
+    right = 2 * index + 1
+
+    # нет дочерних узлов
+    если heap.size < left, то
+        завершить работу
+
+    # right <= heap.size проверяет, что есть оба дочерних узла
+    если (right <= heap.size) и (heap[left] < heap[right]), то
+        index_largest = right
+    иначе
+        index_largest = left
+
+    если heap[index] < heap[index_largest], то
+        обменять местами heap[index] и heap[index_largest]
+        sift_down(heap, index_largest) 
 """
 def main():
     count_line = int(input())
-    # persons = [None] * count_line
 
     persons = Pyramyd(count_line)
 
-    for i in range(count_line):
+    for _ in range(count_line):
         name, points, penalty = input().split()
-        # формирование массива для удобства сравнения
-        persons[i] = (-int(points), int(penalty), name)
+        # формирование эл-та для удобства сравнения
+        persons.put((-int(points), int(penalty), name))
 
-    result = get_order(persons)
+    result = [None] * count_line
+    for count in range(count_line):
+        result[count] = persons.get()
+    
     print(*result, sep='\n')
 
 
