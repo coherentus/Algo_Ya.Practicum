@@ -215,7 +215,7 @@ def main():
     for _ in range(count_line):
         name, points, penalty = input().split()
         # формирование эл-та для удобства сравнения
-        persons.put((-int(points), int(penalty), name))
+        persons.put([-int(points), int(penalty), name])
 
     result = [None] * count_line
     for count in range(count_line):
