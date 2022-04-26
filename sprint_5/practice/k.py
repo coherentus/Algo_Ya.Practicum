@@ -1,28 +1,28 @@
 # do not declare Node in your submit-file 
 class Node: 
     def __init__(self, left=None, right=None, value=0): 
-        self.value: int = value 
+        self.value = value 
         self.right = right 
         self.left = left 
 ################# 
 def print_range(node: Node, l: int, r: int):
-    result = [None] * 100000
-    count = 0
+    arr = [None] * 10000
+    COUNT = 0
 
-    def go_forward(vertex, left, right):
-        
-        if l <= vertex.value <= r:
-            result[count] = vertex.value
-            count += 1
+    def print_forward(node, left, right, arr):
+        if node is None:
+            return
 
-        if not vertex.left is None:
-            go_forward(vertex.left, left, right)
-        if not vertex.right is None:
-            go_forward(vertex.right, left, right)
+        if left <= node.value <= right:
+            arr[COUNT] = node.value
+            COUNT = COUNT + 1
     
-    go_forward(node, l, r)
+        if not node.left is None:
+            print_forward(node.left, left, right, arr)
+        if not node.right is None:
+            print_forward(node.right, left, right, arr)
 
-    for elem in sorted(result):
-        if not elem is None:
-            print(elem)
-    return sorted(result)
+    print_forward(node, l, r, arr)
+
+    for num in sorted(arr[0:COUNT]):
+        print(num)

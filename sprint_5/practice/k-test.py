@@ -6,48 +6,21 @@ class Node:
         self.left = left 
 ################# 
 def print_range(node: Node, l: int, r: int):
-    result = []
+    
+    def print_forward(node, left, right):
+        if node is None:
+            return
 
-    # поиск первого ключа (левого)
-    key = l
-    current_node = node
-    is_found: boolean = False
-    parent_d: Optional[Node] = None
-    while True:
-        if current_node.value == key:
-            is_found = True
-            break
-        parent_d = current_node
-        if current_node.value > key:
-            if current_node.left is None:
-                break
-            current_node = current_node.left
-        else:
-            if current_node.right is None:
-                break
-            current_node = current_node.right
+        if left <= node.value <= right:
+            print(node.value)
     
-    # current_node - первый левый ключ 
-    # parrent_d - родитель
+        if not node.right is None:
+            print_forward(node.right, left, right)
+        if not node.left is None:
+            print_forward(node.left, left, right)
     
-    
-    
-    
-    def go_forward(vertex, left, right, res):
-        print(vertex.value)
-        if l <= vertex.value <= r:
-            result.append(vertex.value)
+    print_forward(node, l, r)
 
-        if not vertex.left is None:
-            go_forward(vertex.left, left, right, res)
-        if not vertex.right is None:
-            go_forward(vertex.right, left, right, res)
-    
-    go_forward(node, l, r, result)
-
-    for elem in sorted(result):
-        print(elem)
-    return sorted(result)
 """
 5
 1 7 2 4
@@ -59,11 +32,11 @@ def print_range(node: Node, l: int, r: int):
 14
 """
 def main():
-    node5 = Node(15, None, None)
-    node4 = Node(11, None, node5)
-    node3 = Node(1, None, None)
-    node2 = Node(3, node3, None)
-    root = Node(7, node2, node4)
+    node5 = Node(None, None, 15)
+    node4 = Node(None, node5, 11)
+    node3 = Node(None, None, 1)
+    node2 = Node(node3, None, 3)
+    root = Node(node2, node4, 7)
     print_range(root, 6, 14)
 
 
