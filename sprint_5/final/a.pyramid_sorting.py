@@ -73,10 +73,18 @@
 # 3. Вывод результата.
 #
 # -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
-#
+# Решение задачи основано на принципах(свойствах) бинарной кучи.
+# Методы класса, реализующие восстановление свойств кучи после добавления или
+# удаления элемента, основаны на алгоритмах кучи "просеивание вверх" и
+# "просеивание вниз". В их реализациях учтены варианты неверных запросов,
+# а также проверяются выходы за пределы имеющегося массива, в котором
+# хранится куча.
 #
 # -- ОЦЕНКА СЛОЖНОСТИ --
-#
+# Временная сложность отдельных этапов пирамидальной сортировки O(n * log n),
+# где n - количество эл-ов, которые надо отсортировать. Соответственно,
+# сложность временная алгоритма всей задачи в целом также O(n * log n).
+# Пространственная сложность составит O(n), так как нужна память для кучи.
 
 class Pyramyd:
 
@@ -160,44 +168,6 @@ class Pyramyd:
 
             self.__sift_down(index_largest) 
 
-    def __get_point(self):
-        return self.__point
-
-"""
-функция heapsort(array):
-  # Создадим пустую бинарную кучу.
-  heap = []
-  
-  # Вставим в неё по одному все элементы массива, сохраняя свойства кучи.
-  для каждого элемента item из массива array:
-    heap_add(heap, item)   # псевдокод для heap_add можно посмотреть в прошлом уроке
-  
-  # Будем извлекать из неё наиболее приоритетные элементы, удаляя их из кучи.
-  sorted_array = []
-  i = 0
-  до тех пор, пока куча не пуста:
-    heap, sorted_array[i] = heap_get_max_priority(heap) 
-    # псевдокод для heap_get_max_priority можно посмотреть в прошлом уроке
-    i += 1
-
-функция sift_down(heap, index):
-    left = 2 * index 
-    right = 2 * index + 1
-
-    # нет дочерних узлов
-    если heap.size < left, то
-        завершить работу
-
-    # right <= heap.size проверяет, что есть оба дочерних узла
-    если (right <= heap.size) и (heap[left] < heap[right]), то
-        index_largest = right
-    иначе
-        index_largest = left
-
-    если heap[index] < heap[index_largest], то
-        обменять местами heap[index] и heap[index_largest]
-        sift_down(heap, index_largest) 
-"""
 def main():
     count_line = int(input())
 
@@ -206,7 +176,7 @@ def main():
     for _ in range(count_line):
         name, points, penalty = input().split()
         # формирование эл-та для удобства сравнения
-        persons.put([-int(points), int(penalty), name])
+        persons.put((-int(points), int(penalty), name))
 
     result = [None] * count_line
     for count in range(count_line):
