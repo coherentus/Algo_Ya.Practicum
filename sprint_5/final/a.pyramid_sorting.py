@@ -93,7 +93,7 @@ class Pyramyd:
         self.__size = size  # общий размер
         self.__lenght = 0  # текущая заполненность
         self.__point = 1  # первый свободный индекс
-    
+
     def put(self, elem):
         """Добавить элемент в пирамиду.
 
@@ -114,12 +114,12 @@ class Pyramyd:
     def __sift_up(self, idx):
         if idx == 1:
             return
-        
+
         parent_idx = idx // 2
         if self.__items[parent_idx] > self.__items[idx]:
             self.__items[parent_idx], self.__items[idx] = \
-            self.__items[idx], self.__items[parent_idx]
-            self.__sift_up(parent_idx) 
+                self.__items[idx], self.__items[parent_idx]
+            self.__sift_up(parent_idx)
 
     def get(self):
         """Извлечь элемент с наивысшим приоритетом.add()
@@ -148,25 +148,24 @@ class Pyramyd:
     def __sift_down(self, idx):
         left = 2 * idx
         right = left + 1
-        
+
         # нет дочерних узлов
         if self.__lenght < left:
             return
 
         # right <= heap.size проверяет, что есть оба дочерних узла
-        if (
-            (right <= self.__lenght) and
-            (self.__items[left] > self.__items[right])
-            ):
+        if ((right <= self.__lenght) and
+                (self.__items[left] > self.__items[right])):
             index_largest = right
         else:
             index_largest = left
 
         if self.__items[idx] > self.__items[index_largest]:
-            self.__items[idx],self.__items[index_largest] = \
-            self.__items[index_largest], self.__items[idx]
+            self.__items[idx], self.__items[index_largest] = \
+                self.__items[index_largest], self.__items[idx]
 
-            self.__sift_down(index_largest) 
+            self.__sift_down(index_largest)
+
 
 def main():
     count_line = int(input())
@@ -181,10 +180,9 @@ def main():
     result = [None] * count_line
     for count in range(count_line):
         result[count] = persons.get()[2]
-    
+
     print(*result, sep='\n')
 
 
 if __name__ == '__main__':
     main()
-
