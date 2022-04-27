@@ -1,14 +1,14 @@
-class Node:  
-    def __init__(self, value, left=None, right=None):  
-        self.value = value  
-        self.right = right  
+class Node:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.right = right
         self.left = left
 
 # Comment it before submitting
-# class Node:  
-#     def __init__(self, value, left=None, right=None):  
-#         self.value = value  
-#         self.right = right  
+# class Node:
+#     def __init__(self, value, left=None, right=None):
+#         self.value = value
+#         self.right = right
 #         self.left = left
 
 
@@ -24,10 +24,10 @@ def solution(root):
             left_ok = False
         if node.right and (node.right.value <= node.value):
             right_ok = False
-        
+
         if (left_ok == False) or (right_ok == False):
             return False
-        
+
         if node.left:
             if step(node.left) == False:
                 return False
