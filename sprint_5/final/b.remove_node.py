@@ -1,25 +1,35 @@
-"""
-Дано бинарное дерево поиска, в котором хранятся ключи.
-Ключи — уникальные целые числа. Найдите вершину с заданным ключом
-и удалите её из дерева так, чтобы дерево осталось корректным
-бинарным деревом поиска. Если ключа в дереве нет,
-то изменять дерево не надо.
-На вход вашей функции подаётся корень дерева и ключ, который надо удалить.
-Функция должна вернуть корень изменённого дерева. Сложность удаления
-узла должна составлять O(h), где h –— высота дерева.
-Создавать новые вершины (вдруг очень захочется) нельзя.
-"""
-# do not declare Node in your submit-file 
-from typing import Optional
-from xmlrpc.client import boolean
+# Задача Б. Написать функцию для удаления ключа бинарного дерева.
+# На входе - корень дерева и ключ. На выходе - корень изменённого
+# дерева. Создавать  новые вершины нельзя.
+#
+# -- ПРИНЦИП РАБОТЫ --
+# Работа функции заключается в двух этапах:
+# - первый - это поиск узла с заданным ключом, если ключ не найден,
+# возвращается исходное дерево.
+# - второй - собственно удаление.
+# 
+#  
+#
+#
+#
+#
+#
+#
+#
+#
+# -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+#
+# -- ОЦЕНКА СЛОЖНОСТИ --
+#
 
 
-class Node: 
-    def __init__(self, left=None, right=None, value=0): 
-        self.value = value 
-        self.right = right 
-        self.left = left 
- 
+class Node:
+    def __init__(self, left=None, right=None, value=0):
+        self.value = value
+        self.right = right
+        self.left = left
+
+
 def remove(root, key: int):
     """Найти и удалить вершину с заданным ключом.
 
@@ -29,12 +39,14 @@ def remove(root, key: int):
 
     Returns:
         Node: Корень результирующего дерева.
-    
+
     Алгоритм работы.
     Ключ ищется один раз, так как уникален по условию.
-    Обход LMR.
     Если ключ - лист, то у его родителя устанавливается None.
-    
+    Если ключ имеет одного потомка, то этот потомок вписывается
+    у родителя вместо ключа.
+    Если у ключа два потомка, то ищется самый правый узел в левом
+    поддереве, он вписывается вместо удаляемого.
     """
     from typing import Optional
 
@@ -59,7 +71,7 @@ def remove(root, key: int):
 
     # find node
     current_node = root
-    is_found: boolean = False
+    is_found: bool = False
     parent_d: Optional[Node] = None
     while True:
         if current_node.value == key:
@@ -74,8 +86,7 @@ def remove(root, key: int):
             if current_node.right is None:
                 break
             current_node = current_node.right
-            
-    
+
     # Узел не найден.
     if not is_found:
         return root
@@ -118,13 +129,13 @@ def remove(root, key: int):
         current_node.value = current_node.left.value
         current_node.left = None
         return root
-    
+
     # поиск враво до None
     sub_node = sub_parent.right
     if sub_node is None:  # узла вправо нет
-            current_node.value = sub_parent.value
-            current_node.left = sub_parent.left
-            return root
+        current_node.value = sub_parent.value
+        current_node.left = sub_parent.left
+        return root
     while True:
         if sub_node.right is None:  # узел для обмена найден
             current_node.value = sub_node.value

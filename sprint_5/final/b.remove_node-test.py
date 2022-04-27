@@ -10,16 +10,15 @@
 Создавать новые вершины (вдруг очень захочется) нельзя.
 """
 # do not declare Node in your submit-file 
-from typing import Optional
-from xmlrpc.client import boolean
 
 
-class Node: 
+class Node:
     def __init__(self, left=None, right=None, value=0): 
         self.value = value 
         self.right = right 
         self.left = left 
- 
+
+
 def remove(root, key: int):
     """Найти и удалить вершину с заданным ключом.
 
@@ -59,7 +58,7 @@ def remove(root, key: int):
 
     # find node
     current_node = root
-    is_found: boolean = False
+    is_found: bool = False
     parent_d: Optional[Node] = None
     while True:
         if current_node.value == key:
@@ -74,8 +73,7 @@ def remove(root, key: int):
             if current_node.right is None:
                 break
             current_node = current_node.right
-            
-    
+
     # Узел не найден.
     if not is_found:
         return root
