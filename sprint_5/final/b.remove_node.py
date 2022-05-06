@@ -1,4 +1,5 @@
-# Задача Б. Написать функцию для удаления ключа бинарного дерева.
+# https://contest.yandex.ru/contest/24810/run-report/68149290/
+# # Задача Б. Написать функцию для удаления ключа бинарного дерева.
 # На входе - корень дерева и ключ. На выходе - корень изменённого
 # дерева. Создавать  новые вершины нельзя.
 #
@@ -8,20 +9,37 @@
 # возвращается исходное дерево.
 # - второй - собственно удаление.
 #
+# Удаление имеет несколько вариантов:
+# - удаляемый узел - лист (не имеет потомков).
+# Удаление заключается записью в родительском узле None.
 #
+# - удаляемый узел имеет одного потомка.
+# Удаление заключается в записи ссылки на этого потомка в родительский узел.
 #
-#
-#
-#
-#
-#
-#
+# - удаляемый узел имеет двух потомков(левое и правое поддерево).
+# В этом варианте ищется самый правый узел в левом поддереве.
+# Если это лист, то его значение переносится в "удаляемый" узел, а сам лист
+# удаляется.
+# Если самый правый узел содержит имеет потомка(как следствие, левого),
+# то значение найденного правого узла переносится в "удаляемый" узел,
+# а левого потомка этого правого узла усыновляет родительский узел правого
+# узла в качестве правого потомка.
 #
 # -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+# Теория и механизмы работы с бинарным деревом наглядно рассмотрены по ссылке
+# https://practicum.yandex.ru/learn/algorithms/courses/7f101a83-9539-4599-b6e8-8645c3f31fad/sprints/21363/topics/e7dbf42a-fd5a-434b-990d-9cfe0e3a10c8/lessons/03eb9b46-4c74-43b4-8d00-a125aeed47bf/
+# В реализации добавлены проверки существования объектов перед обращением
+# к ним.
 #
 # -- ОЦЕНКА СЛОЖНОСТИ --
 #
-
+# Если эл-т для удаления - лист, то сложность удаления не превышает O(h)
+# в худшем случае, где h - высота дерева.
+# Для других случаев сложность также составит не более O(h) в худшем случае,
+# так как алгоритм проходит от корня дерева через удаляемый эл-т до кандидата
+# на перестановку один раз, в худшем случае этот путь может равняться высоте
+# дерева. Пространственная сложность никаким образом не зависит ни от кол-ва
+# эл-ов дерева ни от его высоты, следовательно, составляет O(1).
 
 class Node:
     def __init__(self, left=None, right=None, value=0):
@@ -62,14 +80,18 @@ def remove(root, key: int):
             return None
 
         # потомок один
-        if (not root.left is None) and (root.right is None):
+        if (root.left is not None) and (root.right is None):
             root = root.left
             return root
-        if (root.left is None) and (not root.right is None):
+        if (root.left is None) and (root.right is not None):
             root = root.right
             return root
+        # если дошли сюда, то потомков два
+        # решается в общем случае
 
     # find node
+    # current_node - текущий узел, проверяемый на ключ
+    # parent_d - его родитель
     current_node = root
     is_found: bool = False
     parent_d: Optional[Node] = None
@@ -92,8 +114,11 @@ def remove(root, key: int):
         return root
 
     # Узел найден.
+    # current_node - найденный узел, подлежащий удалению.
+    # parent_d - его родитель, если None, удалять корень.
     # Случай 1. Узел это лист.
     if current_node.right is None and current_node.left is None:
+        # корень в виде листа отсеян раньше, parent_d существует
         if parent_d.left == current_node:
             parent_d.left = None
         else:
@@ -101,6 +126,8 @@ def remove(root, key: int):
         return root
 
     # Случай 2. Узел имеет одного потомка.
+    # корень с одним потомком отсеян раньше, parent_d существует
+
     # нет левого
     # в родителя передвинуть правого потомка
     if current_node.left is None:
@@ -120,6 +147,12 @@ def remove(root, key: int):
 
     # Случай 3. Удаляемый узел имеет 2-х потомков.
     # Заменить удаляемый самым правым из левого поддерева.
+    # на этот момент:
+    # current_node - узел для удаления
+    # parent_d - его родитель. Его равенство None - признак корня.
+
+    """
+    Вариант с перемещением только значения узла.
 
     # вершина поддерева
     sub_parent = current_node.left
@@ -141,5 +174,58 @@ def remove(root, key: int):
             current_node.value = sub_node.value
             sub_parent.right = sub_node.left
             return root
+        sub_parent = sub_parent.right
+        sub_node = sub_node.right
+    """
+
+    # Вариант с перемещением самого узла и корректировки ссылок потомков
+    # и родителя.
+
+    # вершина левого поддерева
+    sub_parent = current_node.left
+
+    # если у этого узла нет правого потомка, то:
+    # - в этом узле(sub_parent) усыновить правое поддерево удаляемого
+    # узла sub_parent.right <- current_node.right
+    # - в родителе удаляемого узла(parent_d) усыновить этот
+    # бывший лист sub_parent
+    if sub_parent.right is None:
+        sub_parent.right = current_node.right
+
+        # найти сторону(лево/право) у родителя удаляемого узла
+        if parent_d is None:  # родителя нет, удаляется корень
+            root = sub_parent
+            return root
+
+        if parent_d.left == current_node:
+            parent_d.left = sub_parent
+        else:
+            parent_d.right = sub_parent
+        return root
+
+    # поиск враво до None в цикле
+    # sub_node станет узлом для замещения удаляемого узла
+    # sub_parent - его родителем
+    sub_node = sub_parent.right
+    while True:
+        if sub_node.right is None:  # узел для обмена найден
+            # - родитель узла для обмена усыновляет левого потомка
+            # этого узла, в том числе и None. sub_node отвязан от
+            # дерева, а его потомков можно перезаписывать.
+            # - sub_node усыновляет левого и правого потомков узла,
+            # подлежащего удалению(current_node).
+            # - родитель удаляемого узла усыновляет sub_node.
+            sub_parent.right = sub_node.left
+            sub_node.left = current_node.left
+            sub_node.right = current_node.right
+            if parent_d is None:  # родителя нет, удаляется корень
+                root = sub_node
+                return root
+            if parent_d.left == current_node:
+                parent_d.left = sub_node
+            else:
+                parent_d.right = sub_node
+            return root
+
         sub_parent = sub_parent.right
         sub_node = sub_node.right
