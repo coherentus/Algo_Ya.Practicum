@@ -1,14 +1,14 @@
-class Node:  
-    def __init__(self, value, left=None, right=None):  
-        self.value = value  
-        self.right = right  
+class Node:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.right = right
         self.left = left
 
 # Comment it before submitting
-# class Node:  
-#     def __init__(self, value, left=None, right=None):  
-#         self.value = value  
-#         self.right = right  
+# class Node:
+#     def __init__(self, value, left=None, right=None):
+#         self.value = value
+#         self.right = right
 #         self.left = left
 
 
@@ -16,6 +16,7 @@ def solution(root):
     #  Your code
     #  “ヽ(´▽｀)ノ”
     nodes_values = list()
+
     def step(node, arr):
         arr.append(node.value)
         if (node.right is None) and (node.left is None):

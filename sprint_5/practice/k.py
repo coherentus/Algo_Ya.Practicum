@@ -5,24 +5,18 @@ class Node:
         self.right = right
         self.left = left
 #################
+
+
 def print_range(node: Node, l: int, r: int):
-    arr = [None] * 10000
-    COUNT = 0
 
-    def print_forward(node, left, right, arr):
-        if node is None:
-            return
+    if node is None:
+        return
 
-        if left <= node.value <= right:
-            arr[COUNT] = node.value
-            COUNT = COUNT + 1
-
-        if not node.left is None:
-            print_forward(node.left, left, right, arr)
-        if not node.right is None:
-            print_forward(node.right, left, right, arr)
-
-    print_forward(node, l, r, arr)
-
-    for num in sorted(arr[0:COUNT]):
-        print(num)
+    if node.value < l:
+        print_range(node.right, l, r)
+    elif node.value > r:
+        print_range(node.left, l, r)
+    else:
+        print_range(node.left, l, r)
+        print(node.value)
+        print_range(node.right, l, r)
