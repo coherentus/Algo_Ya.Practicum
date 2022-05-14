@@ -25,15 +25,15 @@ def solution(root):
         if node.right and (node.right.value <= node.value):
             right_ok = False
 
-        if (left_ok == False) or (right_ok == False):
+        if (left_ok is False) or (right_ok is False):
             return False
 
         if node.left:
-            if step(node.left) == False:
+            if step(node.left) is False:
                 return False
         if node.right:
-            if step(node.right) == False:
+            if step(node.right) is False:
                 return False
-    if step(root) == False:
+    if step(root) is False:
         return False
     return True
