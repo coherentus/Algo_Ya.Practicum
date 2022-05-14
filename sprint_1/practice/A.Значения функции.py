@@ -9,6 +9,7 @@ def func(a_value, x_value, b_value, c_value):
     """
     return a_value * x_value ** 2 + b_value * x_value + c_value
 
+
 def main():
     a_value, x_value, b_value, c_value = list(map(int, input().split()))
     print(func(a_value, x_value, b_value, c_value))
