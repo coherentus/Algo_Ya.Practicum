@@ -23,13 +23,11 @@ def main():
         # для вершины vert_1 (vertexs[vert_1 - 1]) обновить список вершин
         if vert_2 not in vertexs[vert_1 - 1]:
             vertexs[vert_1 - 1].append(vert_2)
-        """if vert_1 not in vertexs[vert_2 - 1]:
-            vertexs[vert_2 - 1].append(vert_1)"""
+        if vert_1 not in vertexs[vert_2 - 1]:
+            vertexs[vert_2 - 1].append(vert_1)
     for count in range(num_vert):
         vertexs[count] = sorted(vertexs[count])
     start_vertex = int(input())
-    if num_vert == 1:
-        print(start_vertex)
 
     main_dfs(vertexs, start_vertex)
 
