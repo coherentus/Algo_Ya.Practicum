@@ -1,25 +1,30 @@
+from queue import Queue
+
+
 def bfs(vert_arr, num_vertex, color):  # v - номер вершины
     color[num_vertex] = 'gray'  # Вершина посещена, но ещё не обработана.
     print(num_vertex, end=' ')
 
-    sequ = []
+    sequ = Queue(100000 + 1)
     for num in vert_arr[num_vertex]:
         if color[num] == 'white':
-            sequ.append(num)
+            sequ.put(num)
+            print(num, end=' ')
+            color[num] = 'gray'
 
-    while sequ:
-        fromm = sequ.pop(0)
+    while not sequ.empty():
+        fromm = sequ.get()
         if color[fromm] == 'white':
             print(fromm, end=' ')
             color[fromm] = 'gray'
             for num in vert_arr[fromm]:
                 if color[num] == 'white':
-                    sequ.append(num)
+                    sequ.put(num)
 
 
 def main_bfs(vert_arr, start):
     # Длина массива равна числу вершин |V| + 1
-    color = ['white' for i in range(len(vert_arr) + 1)]
+    color = ['white' for i in range(len(vert_arr))]
     bfs(vert_arr, start, color)
 
 
