@@ -12,14 +12,11 @@ def bfs(vert_arr, num_vertex, color):  # v - номер вершины
 
     while not sequ.empty():
         fromm = sequ.get()
-        step_vertexs = list()
         for num in vert_arr[fromm]:
             if color[num] == 'white':
-                # print(num, end=' ')
+                print(num, end=' ')
                 color[num] = 'gray'
-                step_vertexs.append(num)
                 sequ.put(num)
-        print(*step_vertexs, end=' ')
 
 
 def main_bfs(vert_arr, start):
@@ -30,14 +27,16 @@ def main_bfs(vert_arr, start):
 
 def main():
     num_vert, num_edg = map(int, input().split())  # кол-во вершин и рёбер
-    vertexs = [list() for i in range(num_vert + 1)]  # set()
+    vertexs = [set() for i in range(num_vert + 1)]
     # считывание и обработка рёбер
-    for _ in range(num_edg):
-        # вершины, соединяемые ребром
-        vert_1, vert_2 = map(int, input().split())
-        # для вершины vert_1 (vertexs[vert_1 - 1]) обновить список вершин
-        vertexs[vert_1].append(vert_2)
-        vertexs[vert_2].append(vert_1)
+    edges = [None for i in range(num_edg)] 
+    for edge in range(num_edg):
+        edges[edge] = list(map(int, input().split()))
+    edges = sorted(edges)
+
+    for edge in edges:
+        vertexs[edge[0]].add(edge[1])
+        vertexs[edge[1]].add(edge[0])
 
     """for count in range(num_vert + 1):
         vertexs[count] = sorted(vertexs[count])"""
