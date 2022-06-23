@@ -51,3 +51,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+trr = dict(one = [1, 2, 3])
+trr['one'] = (trr['one'].append(5))
