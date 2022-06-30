@@ -5,18 +5,21 @@ def max_distance(vert_arr, start_vert):
 
     frontier = Queue()
     frontier.put(start_vert)
-    visited = {}
-    visited[start_vert] = True
-    distance = {}
+    color = ['white' for _ in range(len(vert_arr) + 1)]
+    color[start_vert] = 'gray'
+    #visited = {}
+    #visited[start_vert] = True
+    #distance = {}
+    distance = [None for _ in range(len(vert_arr) + 1)]
     distance[start_vert] = 0
     max_dist = 0
 
     while not frontier.empty():
         current = frontier.get()
         for next in vert_arr[current]:
-            if next not in visited:
+            if color[next] == 'white':
                 frontier.put(next)
-                visited[next] = True
+                color[next] = 'gray'
                 distance[next] = distance[current] + 1
                 if distance[next] > max_dist:
                     max_dist = distance[next]
@@ -29,15 +32,24 @@ def main():
         # кол-во вершин и рёбер
         num_vert, num_edg = file_in.readline().split()
         num_vert, num_edg = int(num_vert), int(num_edg)
-        vertexs = [list() for _ in range(num_vert + 1)]
+        # vertexs = [list() for _ in range(num_vert + 1)]
+        vertexs = dict()
         # считывание и обработка рёбер
         for _ in range(num_edg):
             # вершины, соединяемые ребром
             vert_1, vert_2 = file_in.readline().split()
             vert_1, vert_2 = int(vert_1), int(vert_2)
             
-            vertexs[vert_2].append(vert_1)
-            vertexs[vert_1].append(vert_2)
+            tmp_val = vertexs.get(vert_1, [])
+            tmp_val.append(vert_2)
+            vertexs[vert_1] = tmp_val
+            
+            tmp_val = vertexs.get(vert_2, [])
+            tmp_val.append(vert_1)
+            vertexs[vert_2] = tmp_val
+            
+            """vertexs[vert_2].append(vert_1)
+            vertexs[vert_1].append(vert_2)"""
             
         """for _ in range(len(vertexs)):
             vertexs[_] = sorted(vertexs[_])"""
