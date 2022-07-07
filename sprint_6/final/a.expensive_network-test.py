@@ -1,3 +1,6 @@
+from queue import PriorityQueue
+
+
 ERROR_MESSAGE = 'Oops! I did it again'
 
 def edge_input(vert_arr, edge_line: str):
@@ -68,7 +71,7 @@ def extract_max(edges):
 
 
 
-def max_weight(vertexs_full):
+def max_weight(vertexs_full, how_edges):
     """Найти максимальное остовное дерево. Вернуть его вес.
 
     Args:
@@ -80,6 +83,7 @@ def max_weight(vertexs_full):
         Размер списка на единицу больше кол-ва вершин для удобства
         нумерации, т.е. нулевой эл-т не используется.
         Все ключи и значения типа int(целые числа).
+        how_edges (:int) Кол-во рёбер в графе.
     
     Return:
         Суммарный вес максимального остовного дерева графа,
@@ -105,25 +109,42 @@ def max_weight(vertexs_full):
         # edges += graph.edges.filter(start == v, end in not_added)
     
     
-    maximum_spanning_tree = list()   # Рёбра, составляющие MST.
+    max_tree_weghts = list()   # Веса рёбер, составляющие MST.
 
     vert_in_tree = set()  # Множество вершин, уже добавленных в остов.
     vert_in_graph = set() # Множество вершины, ещё не добавленных в остов. 
-    potent_edges = list() # Массив рёбер, исходящих из остовного дерева.
     
-    for vert_num in range(1, len(vertexs_full) + 1):
-        if vert_num:
-            vert_in_graph.add(vert_num)
+    # Промежуточное хранилище для рёбер, потенциально могущих войти в остов.
+    # Добавляются в виде (вес, [нач.вершина, кон.вершина]) приоритет - вес.
+    potent_edges = PriorityQueue(maxsize=how_edges)
+    
+    # В графе есть все вершины от 1 до кол-ва вершин
+    for vert_num in range(1, len(vertexs_full)):
+        vert_in_graph.add(vert_num)
 
     # Из множества вершин графа берём первую.
-    v = vert_in_graph[0]
+    v = vert_in_graph[0]  # 1 другими словами
     vert_in_tree.add(v)
     vert_in_graph.remove(v)
     
     # рёбра этой вершины добавить в кандидаты на остов.
-    # Добавляем все рёбра, которые инцидентны v, но их конец ещё не в остове.
+    # Добавляем все рёбра, которые инцидентны v
+    # vertexs[v] - словарь смежных с v вершин {вершина: вес}
+    for end_vert, weight in vertexs[v].items():
+        # пишем в очередь с приоритетом на минимум
+        potent_edges.put(
+            (-weight, [v, end_vert])
+        )
     
-
+    """, но их конец ещё не в остове."""
+    if not potent_edges.empty():
+        cur_edge = potent_edges.get()
+    else:
+        return ERROR_MESSAGE
+    
+    next_vert = cur_edge[1][1]
+    
+    
     пока vert_in_graph не пуст и potent_edges не пуст:
         # Подразумеваем, что extract_minimum извлекает минимальное ребро 
         # из массива рёбер и больше данного ребра в массива не будет.
@@ -166,7 +187,7 @@ def main():
 
         file_in.close()
 
-    print(max_weight(vertexs))
+    print(max_weight(vertexs, num_edg))
 
 
 if __name__ == '__main__':
