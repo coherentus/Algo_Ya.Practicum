@@ -29,14 +29,6 @@ def edge_input(vert_arr, edge_line: str):
         
         # ин-фа для первой о второй
         cur_vert: dict = vert_arr[vert_1]
-        
-        """if vert_2 in cur_vert:
-            cur_val = cur_vert[vert_2]
-            if weight > cur_val:
-                cur_vert[vert_2] = weight
-        else:
-            cur_vert[vert_2] = weight"""
-        
         if cur_vert.setdefault(vert_2, weight) < weight:
             cur_vert[vert_2] = weight
         
@@ -68,7 +60,6 @@ def extract_max(edges):
             max_e = edge
     edges.remove(max_e)
     return max_e
-
 
 
 def max_weight(vertexs_full, how_edges):
@@ -123,14 +114,14 @@ def max_weight(vertexs_full, how_edges):
         vert_in_graph.add(vert_num)
 
     # Из множества вершин графа берём первую.
-    v = vert_in_graph[0]  # 1 другими словами
+    v = 1  # 1 другими словами
     vert_in_tree.add(v)
     vert_in_graph.remove(v)
     
     # рёбра этой вершины добавить в кандидаты на остов.
     # Добавляем все рёбра, которые инцидентны v
     # vertexs[v] - словарь смежных с v вершин {вершина: вес}
-    for end_vert, weight in vertexs[v].items():
+    for end_vert, weight in vertexs_full[v].items():
         # пишем в очередь с приоритетом на минимум
         potent_edges.put(
             (-weight, [v, end_vert])
@@ -145,7 +136,7 @@ def max_weight(vertexs_full, how_edges):
     next_vert = cur_edge[1][1]
     
     
-    пока vert_in_graph не пуст и potent_edges не пуст:
+    """пока vert_in_graph не пуст и potent_edges не пуст:
         # Подразумеваем, что extract_minimum извлекает минимальное ребро 
         # из массива рёбер и больше данного ребра в массива не будет.
         e = extract_minimum(edges)
@@ -156,7 +147,7 @@ def max_weight(vertexs_full, how_edges):
     если vert_in_graph не пуст, то 
         верни ошибку "Исходный граф несвязный"
     иначе
-        верни minimum_spanning_tree 
+        верни minimum_spanning_tree """
 
 
 def main():
@@ -178,8 +169,9 @@ def main():
         num_vert, num_edg = int(num_vert), int(num_edg)
         if num_vert - num_edg > 1:
             print(ERROR_MESSAGE)
-            return
-        
+            file_in.close()
+            exit(0)
+
         vertexs = [dict() for _ in range(num_vert + 1)]
         # считывание и обработка рёбер
         for _ in range(num_edg):
