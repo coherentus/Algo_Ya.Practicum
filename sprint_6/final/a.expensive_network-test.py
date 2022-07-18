@@ -3,19 +3,20 @@ from queue import PriorityQueue
 
 ERROR_MESSAGE = 'Oops! I did it again'
 
+
 def edge_input(vert_arr, edge_line: str):
     """По условию добавить данные в список вершин.
 
     Args:
         vert_arr (list(dict(int:key: int:value))): массив вершин,
-            индекс это номер вершины, словарь - инцидентное ребро,
+            индекс это номер вершины, словарь - инцидентные рёбра,
             ключ - номер смежной вершины, а значение - вес.
         edge_line (str): строка ввода, содержит три значения.
-    
+
     В графе могут быть петли и кратные рёбра. Для поиска остовного
     дерева в них нет надобности. Петли просто игнорятся, а из
     кратных рёбер остаётся с наибольшим весом.
-    
+
     Фунция изменяет данные в переданном массиве, ничего не возвращает.
     """
     # вершины, соединяемые ребром и вес этого ребра
@@ -23,46 +24,22 @@ def edge_input(vert_arr, edge_line: str):
     vert_1, vert_2, weight = int(vert_1), int(vert_2), int(weight)
 
     if not vert_1 == vert_2:  # отброс петель
-        # граф ненаправленный, поэтому от ребра добавляются обе вершины
+        # граф ненаправленный, поэтому данные ребра добавляются в обе вершины
         # если вершина уже упоминалась, то это кратное ребро, обновить
         # значение веса, если он больше
-        
+
         # ин-фа для первой о второй
         cur_vert: dict = vert_arr[vert_1]
         if cur_vert.setdefault(vert_2, weight) < weight:
             cur_vert[vert_2] = weight
-        
+
         # ин-фа для второй о первой
-        cur_vert: dict = vert_arr[vert_2]
+        cur_vert = vert_arr[vert_2]
         if cur_vert.setdefault(vert_1, weight) < weight:
             cur_vert[vert_1] = weight
 
 
-def extract_max(edges):
-    """Найти ребро с максимальным весом, удалить из edges и вернуть.
-
-    Args:
-        edges ([
-            {v_1: NN, v_2: MM, weight: XX}
-            ]
-        ): Набор рёбер графа, где ключи 'v_1' и 'v_2' это вершины,
-        а 'weight' это вес ребра. Значения всех ключей - int(целые числа)
-
-    Returns:
-        {v_1: NN, v_2: MM, weight: XX}: найденное ребро с максимальным весом
-    
-    Проверка на корректность аргумента не производится. Аргумент может быть
-    изменён функцией.
-    """
-    max_e = edges[0]
-    for edge in edges:
-        if max_e['weight'] < edge['weight']:
-            max_e = edge
-    edges.remove(max_e)
-    return max_e
-
-
-def max_weight(vertexs_full, how_edges):
+def max_weight(vertexs_full):
     """Найти максимальное остовное дерево. Вернуть его вес.
 
     Args:
@@ -75,11 +52,11 @@ def max_weight(vertexs_full, how_edges):
         нумерации, т.е. нулевой эл-т не используется.
         Все ключи и значения типа int(целые числа).
         how_edges (:int) Кол-во рёбер в графе.
-    
+
     Return:
         Суммарный вес максимального остовного дерева графа,
         если оно существует, или сообщение об ошибке.
-    
+
     Остовное дерево ищется по алгоритму Прима.
     Берётся первая вершина. В набор потенциальных рёбер добавляются
     все её рёбра. Вершина добавляется в дерево, из просматриваемых удаляется.
@@ -91,68 +68,59 @@ def max_weight(vertexs_full, how_edges):
     поиска ребра и след. вершины. Если ребро найти не удаётся,
     то граф несвязный, выдать ошибку.
     """
-        #
-        # Вершины not_added стоит хранить в таком контейнере,
-        # чтобы проверка (end in not_added) выполнялась эффективно.
-        #
-        # Для этого подойдёт, например, хеш-таблица.
-        # Также в некоторых языках программирования имеется контейнер set.
-        # edges += graph.edges.filter(start == v, end in not_added)
-    
-    
-    max_tree_weghts = list()   # Веса рёбер, составляющие MST.
+    max_tree_weights: int = 0   # Веса рёбер, составляющие MaxST.
 
-    vert_in_tree = set()  # Множество вершин, уже добавленных в остов.
-    vert_in_graph = set() # Множество вершины, ещё не добавленных в остов. 
-    
+    vert_in_tree = list()  # Множество вершин, уже добавленных в остов.
+    vert_in_graph = list()  # Множество вершин, ещё не добавленных в остов.
+
     # Промежуточное хранилище для рёбер, потенциально могущих войти в остов.
     # Добавляются в виде (вес, [нач.вершина, кон.вершина]) приоритет - вес.
-    potent_edges = PriorityQueue(maxsize=how_edges)
-    
+    potent_edges = PriorityQueue()
+
     # В графе есть все вершины от 1 до кол-ва вершин
     for vert_num in range(1, len(vertexs_full)):
-        vert_in_graph.add(vert_num)
+        vert_in_graph.append(vert_num)
 
     # Из множества вершин графа берём первую.
-    v = 1  # 1 другими словами
-    vert_in_tree.add(v)
+    v = 1
+    vert_in_tree.append(v)
     vert_in_graph.remove(v)
-    
+
     # рёбра этой вершины добавить в кандидаты на остов.
     # Добавляем все рёбра, которые инцидентны v
     # vertexs[v] - словарь смежных с v вершин {вершина: вес}
     for end_vert, weight in vertexs_full[v].items():
         # пишем в очередь с приоритетом на минимум
         potent_edges.put(
-            (-weight, [v, end_vert])
+            (-weight, (v, end_vert))
         )
-    
-    """, но их конец ещё не в остове."""
-    if not potent_edges.empty():
-        cur_edge = potent_edges.get()
-    else:
-        return ERROR_MESSAGE
-    
-    next_vert = cur_edge[1][1]
-    
-    
-    """пока vert_in_graph не пуст и potent_edges не пуст:
-        # Подразумеваем, что extract_minimum извлекает минимальное ребро 
-        # из массива рёбер и больше данного ребра в массива не будет.
-        e = extract_minimum(edges)
-        если e.end in not_added, то:
-        minimum_spanning_tree += e
-        add_vertex(e.end)
 
-    если vert_in_graph не пуст, то 
-        верни ошибку "Исходный граф несвязный"
-    иначе
-        верни minimum_spanning_tree """
+    while (not potent_edges.empty()) and vert_in_graph:
+        # взять ребро с максимальным весом
+        # (вес, (вершина, вершина))
+        # первая вершина уже в остове, вторую проверить
+        # ребро учитывается, если вторая вершина не в остове
+        cur_edge = potent_edges.get()
+        secnd_vert = cur_edge[1][1]
+        if secnd_vert not in vert_in_tree:
+            max_tree_weights -= cur_edge[0]
+            vert_in_tree.append(secnd_vert)
+            vert_in_graph.remove(secnd_vert)
+            for end_vert, weight in vertexs_full[secnd_vert].items():
+                # пишем в очередь с приоритетом на минимум
+                potent_edges.put(
+                    (-weight, (secnd_vert, end_vert))
+                )
+
+    if vert_in_graph:
+        return ERROR_MESSAGE
+    else:
+        return max_tree_weights
 
 
 def main():
     """Ввести данные, вызвать обработку, напечатать результат.
-    
+
     Граф вводится в структуру вида:
     vertexs = [
         {vert_number: weight, ...},
@@ -167,10 +135,20 @@ def main():
         # кол-во вершин и рёбер
         num_vert, num_edg = file_in.readline().split()
         num_vert, num_edg = int(num_vert), int(num_edg)
+
+        # для графа из одной вершины
+        if num_vert == 1:
+            print('0')
+            """file_in.close()
+            exit()"""
+            return
+
+        # если есть признак несвязности графа
         if num_vert - num_edg > 1:
             print(ERROR_MESSAGE)
-            file_in.close()
-            exit(0)
+            """file_in.close()
+            exit()"""
+            return
 
         vertexs = [dict() for _ in range(num_vert + 1)]
         # считывание и обработка рёбер
@@ -179,7 +157,7 @@ def main():
 
         file_in.close()
 
-    print(max_weight(vertexs, num_edg))
+    print(max_weight(vertexs))
 
 
 if __name__ == '__main__':
