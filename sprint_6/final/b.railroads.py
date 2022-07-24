@@ -51,38 +51,44 @@ def check_optimum(towns_arr):
     """
     optimum = RIGHT_RESULT  # заготовка ответа
     colors = ['white' for _ in range(len(towns_arr))]
-    """функция MainDFS():
-        для каждого i от 0 до |V| - 1:
-            # Перебираем варианты стартовых вершин, пока они существуют.
-            if color[i] == white:
-                DFS(i)  # Запускаем обход, стартуя с i-й вершины. """
-
     stack = []
-    start_vert = 1
-    colors[start_vert] = 'gray'  # Вершина посещена, но ещё не обработана.
-
-    cur_vert = towns_arr[start_vert]
-    # [Union(None, True),...] True в положении idx означает наличие ребра из
-    # текущей вершины в вершину с номером idx
-    for idx in range(1, len(towns_arr)):
-        if cur_vert[idx]:
-            if colors[idx] == 'white':
-                stack.append(idx)
-
-    while stack:
-        fromm = stack.pop()
-        if colors[fromm] == 'white':
-            colors[fromm] = 'gray'
-            cur_vert = towns_arr[fromm]
+    # цикл MainDFS():
+    for i in range(1, len(towns_arr)):
+        # Перебираем варианты стартовых вершин, пока они существуют.
+        if colors[i] == 'white':
+            start_vert = i
+            # Вершина посещена, но ещё не обработана.
+            colors[start_vert] = 'gray'
+            cur_vert = towns_arr[start_vert]
             # [Union(None, True),...] True в положении idx означает
             # наличие ребра из текущей вершины в вершину с номером idx
             for idx in range(1, len(towns_arr)):
                 if cur_vert[idx]:
                     if colors[idx] == 'white':
                         stack.append(idx)
-        else:
-            optimum = WRONG_RESULT
-            break
+
+            while stack:
+                fromm = stack.pop()
+                if colors[fromm] == 'white':
+                    colors[fromm] = 'gray'
+                    cur_vert = towns_arr[fromm]
+                    # [Union(None, True),...] True в положении idx означает
+                    # наличие ребра из текущей вершины в вершину с номером idx
+                    for idx in range(1, len(towns_arr)):
+                        if cur_vert[idx]:
+                            if colors[idx] == 'white':
+                                stack.append(idx)
+                            elif colors[idx] == 'gray':
+                                optimum = WRONG_RESULT
+                                break
+                            """elif colors[idx] == 'gray':
+                                # Серую вершину мы могли получить из стека
+                                # только на обратном пути. Следовательно,
+                                # её следует перекрасить в чёрный.
+                                colors[idx] = 'black'"""
+                else:
+                    optimum = WRONG_RESULT
+                    break
 
     """функция DFS(start_vertex):
         stack = Stack()

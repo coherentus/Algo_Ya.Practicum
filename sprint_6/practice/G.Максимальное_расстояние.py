@@ -13,7 +13,7 @@ def max_distance(vert_arr, start_vert):
     planned = Queue()
     planned.put(start_vert)
     color[start_vert] = 'gray'
-    distance[start_vert] = 0
+    distance[start_vert] = max_dist
     # dists_set.add(distance[start_vert])
 
     while not planned.empty():
