@@ -1,4 +1,4 @@
-# https://contest.yandex.ru/contest/25070/run-report/69474952/
+# https://contest.yandex.ru/contest/25070/run-report/69494605/
 # Задача А. Найти вес максимального остовного дерева.
 #
 # Взвешенный ненаправленный граф задаётся набором рёбер.
@@ -47,7 +47,9 @@
 # - O(∣V∣) инициализация массива для хранения вершин. V - кол-во вершин.
 # - O(∣E∣) внесение информации в массив вершин. Е - кол-во рёбер.
 # б) На этапе работы алгоритма
-# - O(∣E∣⋅log∣V∣), где E - кол-во рёбер, а V - кол-во вершин графа.
+# - O(∣V∣⋅log∣E∣), где E - кол-во рёбер, а V - кол-во вершин графа.
+# В алгоритме Прима применена очередь с приоритетом для хранения рёбер,
+# операции извлечения и записи которой работают за O(N), при N эл-тах.
 # Итоговая сложность - O(∣V∣) + O(∣E∣) + O(∣E∣⋅log∣V∣).
 # Пространственная сложность складывается из:
 # - O(∣V∣⋅∣E∣) - в худшем случае, для хранения графа,
@@ -77,8 +79,7 @@ def edge_input(vert_arr, edge_line):
     Фунция изменяет данные в переданном массиве, ничего не возвращает.
     """
     # вершины, соединяемые ребром и вес этого ребра
-    vert_1, vert_2, weight = edge_line.split()
-    vert_1, vert_2, weight = int(vert_1), int(vert_2), int(weight)
+    vert_1, vert_2, weight = map(int, edge_line.split())
 
     if not vert_1 == vert_2:  # отброс петель
         # граф ненаправленный, поэтому данные ребра добавляются в обе вершины
@@ -87,13 +88,10 @@ def edge_input(vert_arr, edge_line):
 
         # ин-фа для первой о второй
         cur_vert: dict = vert_arr[vert_1]
-        if cur_vert.setdefault(vert_2, weight) < weight:
+        if cur_vert.setdefault(vert_2, weight) <= weight:
             cur_vert[vert_2] = weight
-
-        # ин-фа для второй о первой
-        cur_vert = vert_arr[vert_2]
-        if cur_vert.setdefault(vert_1, weight) < weight:
-            cur_vert[vert_1] = weight
+            # ин-фа для второй о первой
+            vert_arr[vert_2][vert_1] = weight
 
 
 def max_weight(vertexs_full):
@@ -197,8 +195,7 @@ def main():
     # ввод данных
     with open('input.txt') as file_in:
         # кол-во вершин и рёбер
-        num_vert, num_edg = file_in.readline().split()
-        num_vert, num_edg = int(num_vert), int(num_edg)
+        num_vert, num_edg = map(int, file_in.readline().split())
 
         # для графа из одной вершины
         if num_vert == 1:

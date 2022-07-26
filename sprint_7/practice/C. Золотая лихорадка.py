@@ -6,7 +6,7 @@ def find_max_cost(heaps_arr, full_weight):
     tmp_quene = PriorityQueue()
     for heap in heaps_arr:
         tmp_quene.put((-(heap[0] * heap[1]), heap))
-    
+
     exp_weight = 0
     exp_cost = 0
     while exp_weight < full_weight and not tmp_quene.empty():
@@ -16,6 +16,7 @@ def find_max_cost(heaps_arr, full_weight):
             exp_cost += -cur_heap[0]
     return exp_cost
 
+
 def main():
     """Ввести данные, вызвать обработку, напечатать результат."""
     # ввод данных
@@ -24,7 +25,7 @@ def main():
         max_weight = int(file_in.readline())
         # количество куч с золотым песком — целое число n (1 ≤ n ≤ 10**5)
         num_heaps = int(file_in.readline())
-        
+
         heaps = [None for _ in range(num_heaps)]
 
         # считывание куч
