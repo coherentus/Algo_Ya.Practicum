@@ -1,47 +1,38 @@
-from queue import Queue
-
-def dfs(vert_arr, num_vertex):  # v - номер вершины
-    color = ['white' for i in range(len(vert_arr) + 1)]
-    color[num_vertex] = 'gray'  # Вершина посещена, но ещё не обработана.
-    result = list()
-    result.append(num_vertex)
-
-    stack = []
-    for num in vert_arr[num_vertex]:
-        if color[num] == 'white':
-            stack.append(num)
-
-    while stack:
-        fromm = stack.pop()
-        if color[fromm] == 'white':
-            result.append(fromm)
-            color[fromm] = 'gray'
-            for num in vert_arr[fromm]:
-                if color[num] == 'white':
-                    stack.append(num)
-
-    return result
-
 def get_components(vert_arr):
-    vert_arr = sorted(vert_arr)
+
     count_comp = 0
     components_arr = list()
-    # набор номеров всех вершин
-    full_vert_numbers = set([x for x in range(1, len(vert_arr) + 1)])
-    start_vert = 1
-    
-    while full_vert_numbers:
-        cur_comp = dfs(vert_arr, start_vert)
-        components_arr.append(cur_comp)
-        count_comp += 1
-        full_vert_numbers -= set(cur_comp)
-        start_vert = list(full_vert_numbers)[0]
-    
+
+    visited = ['white' for _ in range(len(vert_arr))]
+
+    for vert in range(1, len(vert_arr)):
+        if visited[vert] == 'white':
+            count_comp += 1
+            components_arr.append([])
+
+            visited[vert] = 'gray'  # Вершина посещена, но ещё не обработана.
+            components_arr[count_comp - 1].append(vert)
+
+            stack = []
+            for num in vert_arr[vert]:
+                if visited[num] == 'white':
+                    stack.append(num)
+
+            while stack:
+                fromm = stack.pop()
+                if visited[fromm] == 'white':
+
+                    components_arr[count_comp - 1].append(fromm)
+                    visited[fromm] = 'gray'
+                    for num in vert_arr[fromm]:
+                        if visited[num] == 'white':
+                            stack.append(num)
 
     return count_comp, components_arr
 
+
 def main():
-    
+
     with open('input.txt') as file_in:
         # кол-во вершин и рёбер
         num_vert, num_edg = file_in.readline().split()
@@ -52,7 +43,7 @@ def main():
             # вершины, соединяемые ребром
             vert_1, vert_2 = file_in.readline().split()
             vert_1, vert_2 = int(vert_1), int(vert_2)
-            
+
             vertexs[vert_2].append(vert_1)
             vertexs[vert_1].append(vert_2)
 
@@ -61,7 +52,7 @@ def main():
     components_count, components = get_components(vertexs)
     print(components_count)
     for component in components:
-        print(component)
+        print(*sorted(component))
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from queue import Queue
 
 
-def get_distance(vert_arr, start_vert, end_vert):
+def get_distance(vert_arr, start_vert):
     # bfs
     visited = [False] * len(vert_arr)
     visited[start_vert] = True
@@ -12,15 +12,18 @@ def get_distance(vert_arr, start_vert, end_vert):
     
     while not q.empty():
         item_vert, item_weight = q.get()
-        if item_vert == end_vert:
-            return item_weight -1
+        
+        
+        """if item_vert == end_vert:
+            return item_weight -1"""
         
         for too in vert_arr[item_vert]:
             if not visited[too]:
+                result = max(result, item_weight)
                 visited[too] = True
                 q.put((too, item_weight + 1))    
     
-    return -1
+    return result
 
 
 def main():
@@ -40,11 +43,11 @@ def main():
             vertexs[vert_1].append(vert_2)
 
         # вершины для нахождения расстояния
-        from_vert, to_vert = map(int, file_in.readline().split())
+        from_vert = int(file_in.readline())
 
         file_in.close()
 
-    print(get_distance(vertexs, from_vert, to_vert))
+    print(get_distance(vertexs, from_vert))
 
 
 if __name__ == '__main__':
