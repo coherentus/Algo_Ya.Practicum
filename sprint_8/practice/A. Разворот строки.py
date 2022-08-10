@@ -16,9 +16,10 @@ def main():
         # длина каждого из них —– от 1 до 100 символов.
         # Слова состоят из строчных букв английского алфавита.
         words = file_in.readline().split()
-        #get_reverse_line(words)
+
         for idx in range(len(words) - 1, -1, -1):
             print(words[idx], end=' ')
+
 
 if __name__ == '__main__':
     main()
