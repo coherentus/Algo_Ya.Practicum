@@ -2,18 +2,18 @@ from queue import PriorityQueue
 
 
 def find_max_cost(heaps_arr, full_weight):
-    # отсортировать кучи по максим. стоимости c * m
+    # отсортировать кучи по максим. стоимости c
     tmp_quene = PriorityQueue()
     for heap in heaps_arr:
-        tmp_quene.put((-(heap[0] * heap[1]), heap))
+        tmp_quene.put((-heap[0], heap))
 
-    exp_weight = 0
+    exp_weight = full_weight
     exp_cost = 0
-    while exp_weight < full_weight and not tmp_quene.empty():
+    while exp_weight and not tmp_quene.empty():
         cur_heap = tmp_quene.get()
-        if cur_heap[1][1] < full_weight - exp_weight:
-            exp_weight += cur_heap[1][1]
-            exp_cost += -cur_heap[0]
+        cur_weight = min(exp_weight, cur_heap[1][1])
+        exp_weight -= cur_weight
+        exp_cost += cur_heap[1][0] * cur_weight
     return exp_cost
 
 
