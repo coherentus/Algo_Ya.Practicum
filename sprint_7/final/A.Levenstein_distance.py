@@ -1,4 +1,4 @@
-# https://contest.yandex.ru/contest/25597/run-report/69630088/
+# https://contest.yandex.ru/contest/25597/run-report/69639392/
 # Задача A. Расстояние по Левенштейну.
 # Для данных двух строк определить расстояние Левенштейна.
 #
@@ -55,8 +55,13 @@ def get_levenshtein(string_one, string_two):
     # для столбца - длинной. Строка инициализируется сразу целиком,
     # первое значение столбца - на каждой итерации по строкам.
     cur_row = range(cols + 1)
+    btm_row = [None] * (cols + 1)  # место в памяти для рабочей строки
     for row_idx in range(1, rows + 1):
-        prev_row, cur_row = cur_row, [row_idx] + [0] * cols
+    
+        prev_row = cur_row
+        cur_row = btm_row
+        cur_row = [row_idx] + [0] * cols
+
         for col_idx in range(1, cols + 1):
             add, delete, change = (
                 prev_row[col_idx] + 1,
