@@ -1,13 +1,13 @@
 def full_string(origin_string, present_arr):
-    present_arr = sorted(present_arr, reverse=True)
+    present_arr = sorted(present_arr)  # , reverse=True
     result = ''
-    prev_idx = len(origin_string)
+    prev_idx = 0
+
     for idx, cur_str in present_arr:
-        result = origin_string[idx:prev_idx] + result
-        result = cur_str + result
+        result += origin_string[prev_idx:idx]
+        result += cur_str
         prev_idx = idx
-    if idx > 0:
-        result = origin_string[0:prev_idx] + result
+    result += origin_string[prev_idx:]
     return result
 
 
