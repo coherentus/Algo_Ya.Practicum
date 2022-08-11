@@ -57,7 +57,7 @@ def get_levenshtein(string_one, string_two):
     cur_row = range(cols + 1)
     btm_row = [None] * (cols + 1)  # место в памяти для рабочей строки
     for row_idx in range(1, rows + 1):
-    
+
         prev_row = cur_row
         cur_row = btm_row
         cur_row = [row_idx] + [0] * cols
