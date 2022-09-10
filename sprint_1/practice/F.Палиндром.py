@@ -2,8 +2,7 @@ def is_palindrom(in_text):
     """Return True if in_text is a palindrom, False if not.
 
     Args:
-        in_text (str): string of numeric, alphabetical and .
-
+        in_text (str): string of numeric, alphabetical and punctuations.
     Returns:
         boolean:
     """
@@ -21,7 +20,7 @@ def is_palindrom(in_text):
 
 def main():
     text = input()
-    
+
     print(is_palindrom(text))
 
 

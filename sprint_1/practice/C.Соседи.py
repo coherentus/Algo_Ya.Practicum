@@ -1,6 +1,15 @@
 def find_neighbors(rows, cols, matrix, target_row, target_col):
-    """In matrix find neighbors for target element. Return it sorted.
-    
+    """In matrix find neighbors for target element. Return sorted values.
+
+    Args:
+        rows (int): how rows in matrix
+        cols (int): how cols in matrix
+        matrix (list[list]): matrix
+        target_row (int): row idx of target ceil
+        target_col (int): col idx of target ceil
+
+    Returns:
+        list: neigbors of target
     """
     neighbors = list()
 
@@ -35,7 +44,6 @@ def main():
     target_col = int(input())
 
     print(*find_neighbors(rows, cols, matrix, target_row, target_col))
-
 
 
 if __name__ == '__main__':
