@@ -176,6 +176,7 @@ F. Палиндром
 Пример 1
 Ввод	
 A man, a plan, a canal: Panama
+
 Вывод
 True
 
