@@ -29,13 +29,14 @@ def chaotic_weather(num_days, thermal_values):
     # проверка для последнего дня
     if thermal_values[num_days - 1] > thermal_values[num_days - 2]:
         right_count += 1
-    
+
     return right_count
+
 
 def main():
     days_count = int(input())
     days_temp_values = list(map(int, input().split()))
-    
+
     print(chaotic_weather(days_count, days_temp_values))
 
 

@@ -17,12 +17,13 @@ def find_longest_word(text):
             max_word = word
     return max_word, max_len
 
+
 def main():
     _ = int(input())
     in_text = list(map(str, input().split()))
-    
+
     longest_word, len_word = find_longest_word(in_text)
-    
+
     print(longest_word)
     print(len_word)
 

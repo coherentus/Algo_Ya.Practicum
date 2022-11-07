@@ -12,8 +12,9 @@ def parity_compare(num_1, num_2, num_3):
     if (num_1 % 2 == num_2 % 2 and num_2 % 2 == num_3 % 2):
         return True
 
+
 def main():
-    num_1, num_2, num_3= list(map(int, input().split()))
+    num_1, num_2, num_3 = list(map(int, input().split()))
     if parity_compare(num_1, num_2, num_3):
         print('WIN')
     else:
